@@ -24,7 +24,7 @@ const Home = ({post}) => {
             ({_id, title = '', slug = '', _updatedAt = ''}) =>
               slug && (
                 <li key={_id}>
-                  <Link href={`/work/${slug.current}`} as={`/work/${slug.current}`}>
+                  <Link href={`/work/[slug]`} as={`/work/${slug.current}`}>
                     <a>{title}</a>
                   </Link>{' '}
                   ({new Date(_updatedAt).toDateString()})
