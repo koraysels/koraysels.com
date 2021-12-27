@@ -9,8 +9,8 @@ function urlFor(source) {
 
 const Work = ({post}) => {
   const {
-    title = 'Missing title',  clientName = 'Missing name', clientImage, categories, body = []
-  } = post
+    title = 'Missing title', clientName = 'Missing name', clientImage, categories, body = []
+  } = post || {}
 
   return (
     <article>
@@ -36,7 +36,7 @@ const Work = ({post}) => {
 
       <BlockContent
         blocks={body}
-        imageOptions={{ w: 320, h: 240, fit: 'max' }}
+        imageOptions={{w: 320, h: 240, fit: 'max'}}
         {...client.config()}
       />
 
@@ -72,10 +72,12 @@ export async function getStaticProps(context) {
   // It's important to default the slug so that it doesn't return "undefined"
   const {slug = ""} = context.params
   const post = await client.fetch(QUERY, {slug})
+  console.log(post.title)
   return {
     props: {
       post
-    }
+    },
+    revalidate: 50
   }
 }
 
