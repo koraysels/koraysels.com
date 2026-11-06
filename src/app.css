@@ -68,7 +68,8 @@ video {
 }
 
 body {
-	background: var(--surface);
+	background: var(--surface) url('/pattern.svg') repeat 0 0;
+	background-size: 1200px 1200px;
 	color: var(--ink);
 	font-family: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
 	font-size: var(--step-body);
