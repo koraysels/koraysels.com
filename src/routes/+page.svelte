@@ -146,11 +146,11 @@
 	}
 
 	h1 {
-		font-size: clamp(2.6rem, 8vw, 5rem);
+		font-size: var(--title);
 		letter-spacing: -0.09em;
 		line-height: 1.25;
 		color: var(--ink-display);
-		-webkit-text-stroke: calc(var(--edge) * 2) var(--ink-outline);
+		-webkit-text-stroke: var(--title-stroke) var(--ink-outline);
 		paint-order: stroke fill;
 		margin-bottom: 1.1rem;
 	}

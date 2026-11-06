@@ -15,7 +15,11 @@
 	--accent-ink: #ffffff;
 	--ink-display: #ccff00;
 	--ink-outline: #0b1412;
-	--edge: 7px;
+	--title: clamp(2.6rem, 8vw, 5rem);
+	/* the title's stroke is centred, so half of it shows outside the glyph.
+	   the card's border is that same half, so the two weights match. */
+	--title-stroke: 0.085em;
+	--edge: calc(var(--title) * 0.0425);
 
 	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
