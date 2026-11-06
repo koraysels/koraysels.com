@@ -56,8 +56,9 @@
 	{/if}
 
 	<section>
-		<h2>Get in touch</h2>
-		<form
+		<details class="contact">
+			<summary>Get in touch</summary>
+			<form
 			name="contact"
 			method="POST"
 			action="/thanks"
@@ -78,8 +79,9 @@
 			<label for="message">Message</label>
 			<textarea id="message" name="message" rows="5" required></textarea>
 
-			<button type="submit">Send</button>
-		</form>
+				<button type="submit">Send</button>
+			</form>
+		</details>
 	</section>
 
 	<footer>
@@ -154,10 +156,41 @@
 		margin-top: 0.4rem;
 	}
 
+	.contact summary {
+		list-style: none;
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		font-size: var(--step-body);
+		font-weight: 600;
+		width: fit-content;
+	}
+
+	.contact summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.contact summary::before {
+		content: '+';
+		display: inline-block;
+		width: 1ch;
+		color: var(--muted);
+		font-weight: 400;
+	}
+
+	.contact[open] summary::before {
+		content: '\2013';
+	}
+
+	.contact summary:hover {
+		color: var(--accent);
+	}
+
 	form {
 		display: grid;
 		gap: 0.35rem;
 		max-width: 30rem;
+		margin-top: 1.5rem;
 	}
 
 	.hp {
