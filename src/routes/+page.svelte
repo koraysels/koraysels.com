@@ -28,7 +28,8 @@
 	<meta name="description" content="{profile.name}. {profile.line} {profile.city}." />
 </svelte:head>
 
-<main class="sheet">
+<div class="frame">
+	<main class="sheet">
 	<p class="mark">{profile.company}</p>
 
 	<header>
@@ -127,13 +128,12 @@
 				>{#if i < profile.socials.length - 1}{', '}{/if}{/each}
 		</p>
 	</footer>
-</main>
+	</main>
+</div>
 
 <style>
 	.sheet {
 		background: var(--bg);
-		max-width: 42rem;
-		margin: clamp(1rem, 6vw, 6rem) auto;
 		padding: clamp(1.75rem, 5vw, 4rem);
 		display: grid;
 		gap: clamp(2.5rem, 5vw, 4rem);
@@ -145,7 +145,7 @@
 	}
 
 	h1 {
-		font-size: clamp(3.25rem, 11vw, 6.75rem);
+		font-size: clamp(2.6rem, 8vw, 5rem);
 		letter-spacing: -0.09em;
 		line-height: 1.25;
 		color: var(--ink-display);
@@ -263,7 +263,7 @@
 		font: inherit;
 		font-size: var(--step-body);
 		color: var(--ink);
-		background: var(--surface);
+		background: var(--field);
 		border: 0;
 		padding: 0.7rem 0.8rem;
 		width: 100%;
