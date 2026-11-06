@@ -137,12 +137,18 @@
 
 	h1 {
 		font-size: var(--step-display);
+		letter-spacing: -0.03em;
 		margin-bottom: 0.9rem;
 	}
 
 	.letter {
 		display: inline-block;
 		transform-origin: 50% 75%;
+	}
+
+	/* inline-block kills the font's own kerning; the K needs it most */
+	.letter:first-child {
+		margin-right: -0.07em;
 	}
 
 	.line {
