@@ -131,6 +131,32 @@ a:hover {
 	outline-offset: 3px;
 }
 
+/* the sheet is torn at the corners, like the letterforms */
+.sheet {
+	clip-path: polygon(
+		0 30px,
+		11px 19px,
+		3px 9px,
+		18px 12px,
+		23px 0,
+		calc(100% - 25px) 0,
+		calc(100% - 15px) 10px,
+		calc(100% - 4px) 3px,
+		calc(100% - 9px) 18px,
+		100% 27px,
+		100% calc(100% - 24px),
+		calc(100% - 12px) calc(100% - 13px),
+		calc(100% - 3px) calc(100% - 4px),
+		calc(100% - 19px) calc(100% - 7px),
+		calc(100% - 28px) 100%,
+		31px 100%,
+		16px calc(100% - 10px),
+		5px calc(100% - 3px),
+		10px calc(100% - 16px),
+		0 calc(100% - 26px)
+	);
+}
+
 .skip {
 	position: absolute;
 	left: -9999px;
