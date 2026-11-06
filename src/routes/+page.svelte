@@ -115,8 +115,8 @@
 	}
 
 	h1 {
-		font-size: var(--step-head);
-		margin-bottom: 0.6rem;
+		font-size: var(--step-display);
+		margin-bottom: 0.9rem;
 	}
 
 	.line {
