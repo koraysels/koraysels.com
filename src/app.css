@@ -12,6 +12,7 @@
 	--muted: #5d6f68;
 	--accent: #e5005c;
 	--accent-ink: #ffffff;
+	--ink-display: #2d6b56;
 
 	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);

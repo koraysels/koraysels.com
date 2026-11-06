@@ -29,6 +29,7 @@
 			<span aria-hidden="true"
 				>{#each letters as char, i (i)}<span
 						class="letter"
+						class:space={char === ' '}
 						style="transform: {wobble(char, i)}">{char === ' ' ? '\u00a0' : char}</span
 					>{/each}</span
 			>
@@ -137,7 +138,8 @@
 
 	h1 {
 		font-size: var(--step-display);
-		letter-spacing: -0.03em;
+		letter-spacing: -0.05em;
+		color: var(--ink-display);
 		margin-bottom: 0.9rem;
 	}
 
@@ -148,7 +150,11 @@
 
 	/* inline-block kills the font's own kerning; the K needs it most */
 	.letter:first-child {
-		margin-right: -0.07em;
+		margin-right: -0.06em;
+	}
+
+	.letter.space {
+		width: 0.26em;
 	}
 
 	.line {
