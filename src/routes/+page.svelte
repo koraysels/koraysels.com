@@ -124,11 +124,11 @@
 	}
 
 	h2 {
-		font-size: var(--step-body);
-		font-style: italic;
+		font-size: var(--step-small);
+		font-weight: 600;
 		letter-spacing: 0;
 		line-height: 1.5;
-		color: var(--muted);
+		color: var(--accent);
 		margin-bottom: 0.9rem;
 	}
 

@@ -1,14 +1,10 @@
 :root {
-	--bg: #ffffff;
-	--surface: #f4f4f2;
-	--ink: #1f2b4d;
-	--muted: #5d6479;
-	--accent: #f7941d;
-	--accent-ink: #1f2b4d;
-	--field-1: #05070a;
-	--field-1-ink: #ffffff;
-	--field-2: #e3e1dc;
-	--field-2-ink: #1f2b4d;
+	--bg: #fcfdfc;
+	--surface: #c7d6ce;
+	--ink: #12211f;
+	--muted: #5a6a66;
+	--accent: #d6005e;
+	--accent-ink: #ffffff;
 
 	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
@@ -64,7 +60,7 @@ video {
 body {
 	background: var(--surface);
 	color: var(--ink);
-	font-family: Archivo, 'Helvetica Neue', Arial, sans-serif;
+	font-family: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
 	font-size: var(--step-body);
 	line-height: 1.5;
 	font-weight: 400;
@@ -83,8 +79,8 @@ summary {
 h1,
 h2,
 h3 {
-	font-weight: 400;
-	letter-spacing: -0.02em;
+	font-weight: 800;
+	letter-spacing: -0.035em;
 	line-height: 1.0;
 	text-wrap: balance;
 }
