@@ -7,13 +7,20 @@
 	function wobble(char: string, i: number) {
 		const seed = char.charCodeAt(0) * 31 + i * 17;
 		const pick = (n: number, span: number) => (((seed * (n + 3)) % 997) / 997) * span - span / 2;
-		const rotate = pick(1, 7).toFixed(2);
-		const shift = pick(2, 5).toFixed(2);
-		const scale = (1 + pick(3, 0.1)).toFixed(3);
+		const rotate = pick(1, 11).toFixed(2);
+		const shift = pick(2, 9).toFixed(2);
+		const scale = (1 + pick(3, 0.16)).toFixed(3);
 		return `rotate(${rotate}deg) translateY(${shift}px) scale(${scale})`;
 	}
 
 	const letters = profile.name.split('');
+
+	// Per-pair kerning, since inline-block spans ignore the font's own pairs.
+	// Key is the letter's index in the name, value is the gap after it.
+	const kern: Record<number, string> = {
+		0: '-0.06em', // K | o
+		1: '0.05em' // o | r
+	};
 </script>
 
 <svelte:head>
@@ -30,7 +37,8 @@
 				>{#each letters as char, i (i)}<span
 						class="letter"
 						class:space={char === ' '}
-						style="transform: {wobble(char, i)}">{char === ' ' ? '\u00a0' : char}</span
+						style="transform: {wobble(char, i)}; margin-right: {kern[i] ?? '0'}"
+						>{char === ' ' ? '\u00a0' : char}</span
 					>{/each}</span
 			>
 		</h1>
@@ -137,20 +145,18 @@
 	}
 
 	h1 {
-		font-size: var(--step-display);
-		letter-spacing: -0.05em;
+		font-size: clamp(3.25rem, 11vw, 6.75rem);
+		letter-spacing: -0.09em;
+		line-height: 1.25;
 		color: var(--ink-display);
-		margin-bottom: 0.9rem;
+		-webkit-text-stroke: 0.085em var(--ink-outline);
+		paint-order: stroke fill;
+		margin-bottom: 1.1rem;
 	}
 
 	.letter {
 		display: inline-block;
 		transform-origin: 50% 75%;
-	}
-
-	/* inline-block kills the font's own kerning; the K needs it most */
-	.letter:first-child {
-		margin-right: -0.06em;
 	}
 
 	.letter.space {
