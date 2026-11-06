@@ -134,7 +134,7 @@
 <style>
 	.sheet {
 		background: var(--bg);
-		padding: clamp(1.75rem, 5vw, 4rem);
+		padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.75rem, 5vw, 4rem) clamp(1.75rem, 5vw, 4rem);
 		display: grid;
 		gap: clamp(2.5rem, 5vw, 4rem);
 	}
@@ -142,6 +142,7 @@
 	.mark {
 		font-size: var(--step-small);
 		color: var(--muted);
+		margin-bottom: calc(-1 * clamp(1.6rem, 3.4vw, 2.8rem));
 	}
 
 	h1 {
