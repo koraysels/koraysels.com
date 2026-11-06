@@ -34,7 +34,7 @@ export const work: { name: string; href?: string }[] = [
 	{ name: 'Ellen Verbiest', href: 'https://ellenverbiest.be' },
 	{ name: 'Frederik Van den Bril', href: 'https://frederikvandenbril.be' },
 	{ name: 'Frederik Beyens', href: 'https://frederikbeyens.be' },
-	{ name: 'Prüftechnik dashboards' },
+	{ name: 'Pruftechnik nv' },
 	{ name: 'NMBS realtime arrivals' },
 	{ name: 'Rekordbox Library Fixer', href: 'https://github.com/koraysels/rekordbox-library-fixer' },
 	{ name: 'Bancontact Pro SDK', href: 'https://github.com/koraysels/bancontact-pro' },
