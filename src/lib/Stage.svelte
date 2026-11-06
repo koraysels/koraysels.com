@@ -81,7 +81,7 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		object-position: top center;
+		object-position: top left;
 		opacity: 0;
 		transition: opacity 1600ms var(--ease);
 	}

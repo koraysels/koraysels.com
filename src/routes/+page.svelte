@@ -437,7 +437,7 @@
 		max-width: 42%;
 		aspect-ratio: 4 / 3;
 		object-fit: cover;
-		object-position: top center;
+		object-position: top left;
 		flex: none;
 	}
 
