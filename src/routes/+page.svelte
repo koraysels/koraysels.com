@@ -150,7 +150,7 @@
 		letter-spacing: -0.09em;
 		line-height: 1.25;
 		color: var(--ink-display);
-		-webkit-text-stroke: 0.085em var(--ink-outline);
+		-webkit-text-stroke: calc(var(--edge) * 2) var(--ink-outline);
 		paint-order: stroke fill;
 		margin-bottom: 1.1rem;
 	}

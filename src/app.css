@@ -15,6 +15,7 @@
 	--accent-ink: #ffffff;
 	--ink-display: #ccff00;
 	--ink-outline: #0b1412;
+	--edge: 7px;
 
 	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
 	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
@@ -135,107 +136,86 @@ a:hover {
 	outline-offset: 3px;
 }
 
-/* the card is torn all round, like the letterforms */
+/*
+ * The card's edge is stepped on the same ten pixel grid as the background,
+ * and the frame and the sheet are clipped with the SAME polygon, so the ink
+ * showing between them is exactly --edge thick all the way round. --edge also
+ * drives the title's outline, so the two match by construction.
+ */
+:root {
+	--torn: polygon(
+		20px 10px,
+		30px 0,
+		8% 0px,
+		13% 20px,
+		24% 10px,
+		31% 20px,
+		36% 20px,
+		40% 10px,
+		51% 10px,
+		58% 0px,
+		69% 20px,
+		76% 0px,
+		87% 10px,
+		calc(100% - 20px) 0,
+		calc(100% - 10px) 10px,
+		100% 10px,
+		100% 20px,
+		calc(100% - 0px) 8%,
+		calc(100% - 0px) 14%,
+		calc(100% - 20px) 22%,
+		calc(100% - 10px) 28%,
+		calc(100% - 10px) 38%,
+		calc(100% - 20px) 46%,
+		calc(100% - 10px) 54%,
+		calc(100% - 0px) 66%,
+		calc(100% - 10px) 72%,
+		calc(100% - 10px) 82%,
+		calc(100% - 10px) 88%,
+		100% calc(100% - 20px),
+		calc(100% - 10px) calc(100% - 10px),
+		calc(100% - 20px) 100%,
+		92% calc(100% - 0px),
+		83% calc(100% - 0px),
+		78% calc(100% - 20px),
+		73% calc(100% - 10px),
+		68% calc(100% - 10px),
+		57% calc(100% - 0px),
+		52% calc(100% - 0px),
+		45% calc(100% - 0px),
+		40% calc(100% - 10px),
+		29% calc(100% - 10px),
+		18% calc(100% - 0px),
+		11% calc(100% - 10px),
+		20px 100%,
+		10px calc(100% - 10px),
+		0 calc(100% - 10px),
+		0 calc(100% - 20px),
+		0px 92%,
+		10px 82%,
+		10px 76%,
+		0px 70%,
+		0px 62%,
+		0px 56%,
+		10px 44%,
+		20px 36%,
+		10px 28%,
+		0px 20%,
+		0 20px,
+		10px 10px
+	);
+}
+
 .frame {
 	background: var(--ink-outline);
 	max-width: 43rem;
 	margin: clamp(1rem, 6vw, 6rem) auto;
-	padding: 10px;
-	clip-path: polygon(
-		0 30px,
-		11px 19px,
-		4.3px 9px,
-		18px 12px,
-		30px 0,
-		16% 1.1px,
-		29% 4.6px,
-		43% 0.5px,
-		57% 3.8px,
-		71% 2.6px,
-		84% 0.4px,
-		calc(100% - 30px) 0,
-		calc(100% - 15px) 11px,
-		calc(100% - 4.6px) 4px,
-		calc(100% - 9px) 18px,
-		100% 27px,
-		calc(100% - 0.3px) 18%,
-		calc(100% - 3.0px) 32%,
-		calc(100% - 0.5px) 47%,
-		calc(100% - 0.6px) 61%,
-		calc(100% - 3.0px) 76%,
-		calc(100% - 5.8px) 88%,
-		100% calc(100% - 30px),
-		calc(100% - 13px) calc(100% - 15px),
-		calc(100% - 1.9px) calc(100% - 5px),
-		calc(100% - 20px) calc(100% - 7px),
-		calc(100% - 30px) 100%,
-		84% calc(100% - 1.6px),
-		71% calc(100% - 4.4px),
-		57% calc(100% - 6.6px),
-		43% calc(100% - 4.0px),
-		29% calc(100% - 2.8px),
-		16% calc(100% - 6.8px),
-		30px 100%,
-		16px calc(100% - 11px),
-		1.3px calc(100% - 3px),
-		10px calc(100% - 17px),
-		0 calc(100% - 30px),
-		6.0px 88%,
-		2.0px 76%,
-		1.0px 61%,
-		0.8px 47%,
-		2.2px 32%,
-		5.7px 18%
-	);
+	padding: var(--edge);
+	clip-path: var(--torn);
 }
 
 .sheet {
-	clip-path: polygon(
-		0 26px,
-		10px 16px,
-		5.8px 8px,
-		16px 10px,
-		26px 0,
-		16% 0.2px,
-		29% 1.7px,
-		43% 1.3px,
-		57% 4.4px,
-		71% 4.1px,
-		84% 5.4px,
-		calc(100% - 26px) 0,
-		calc(100% - 13px) 9px,
-		calc(100% - 1.5px) 4px,
-		calc(100% - 8px) 16px,
-		100% 23px,
-		calc(100% - 2.5px) 18%,
-		calc(100% - 0.2px) 32%,
-		calc(100% - 1.3px) 47%,
-		calc(100% - 3.0px) 61%,
-		calc(100% - 0.2px) 76%,
-		calc(100% - 1.2px) 88%,
-		100% calc(100% - 26px),
-		calc(100% - 11px) calc(100% - 13px),
-		calc(100% - 4.9px) calc(100% - 4px),
-		calc(100% - 17px) calc(100% - 6px),
-		calc(100% - 26px) 100%,
-		84% calc(100% - 3.3px),
-		71% calc(100% - 1.3px),
-		57% calc(100% - 3.5px),
-		43% calc(100% - 4.9px),
-		29% calc(100% - 0.0px),
-		16% calc(100% - 4.8px),
-		26px 100%,
-		14px calc(100% - 10px),
-		5.2px calc(100% - 3px),
-		9px calc(100% - 15px),
-		0 calc(100% - 26px),
-		2.0px 88%,
-		0.9px 76%,
-		5.7px 61%,
-		2.0px 47%,
-		0.6px 32%,
-		0.6px 18%
-	);
+	clip-path: var(--torn);
 }
 
 .skip {
