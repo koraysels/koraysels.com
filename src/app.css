@@ -1,0 +1,178 @@
+:root {
+	--bg: #ffffff;
+	--surface: #f4f4f2;
+	--ink: #1f2b4d;
+	--muted: #5d6479;
+	--accent: #f7941d;
+	--accent-ink: #1f2b4d;
+	--field-1: #05070a;
+	--field-1-ink: #ffffff;
+	--field-2: #e3e1dc;
+	--field-2-ink: #1f2b4d;
+
+	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+	--step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+	--step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+	--step-display: clamp(2.5rem, 1.2rem + 4.4vw, 4.5rem);
+
+	--gutter: clamp(1.25rem, 1rem + 1.6vw, 3rem);
+	--gap-section: clamp(6rem, 4rem + 8vw, 15rem);
+	--measure: 46ch;
+
+	--ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+ul,
+ol,
+dl,
+dd {
+	margin: 0;
+}
+
+ul,
+ol {
+	padding: 0;
+	list-style: none;
+}
+
+img,
+video {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: Archivo, 'Helvetica Neue', Arial, sans-serif;
+	font-size: var(--step-body);
+	line-height: 1.5;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	overflow-x: hidden;
+	cursor: default;
+}
+
+/* the readout on the stage only tells the truth if the page sets it */
+p,
+li,
+h1,
+h2,
+h3,
+dd,
+figcaption {
+	cursor: text;
+}
+
+a,
+button,
+label,
+summary {
+	cursor: pointer;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 400;
+	letter-spacing: -0.02em;
+	line-height: 1.0;
+	text-wrap: balance;
+}
+
+h1 {
+	font-size: var(--step-display);
+}
+
+h2 {
+	font-size: var(--step-head);
+}
+
+h3 {
+	font-size: var(--step-lead);
+	line-height: 1.15;
+}
+
+a {
+	color: inherit;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition: color 160ms var(--ease);
+}
+
+a:hover {
+	color: var(--accent);
+}
+
+::selection {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 3px;
+}
+
+.skip {
+	position: absolute;
+	left: -9999px;
+}
+
+.skip:focus {
+	left: var(--gutter);
+	top: 1rem;
+	z-index: 50;
+	background: var(--accent);
+	color: var(--accent-ink);
+	padding: 0.75rem 1rem;
+}
+
+/* motion: the shared entrance */
+[data-rise] {
+	opacity: 0;
+	transform: translateY(26px);
+	transition:
+		opacity 620ms var(--ease),
+		transform 620ms var(--ease);
+	transition-delay: var(--delay, 0ms);
+}
+
+[data-rise].is-in {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	[data-rise] {
+		opacity: 1;
+		transform: none;
+	}
+}
