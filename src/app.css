@@ -62,7 +62,7 @@ video {
 }
 
 body {
-	background: var(--bg);
+	background: var(--surface);
 	color: var(--ink);
 	font-family: Archivo, 'Helvetica Neue', Arial, sans-serif;
 	font-size: var(--step-body);
@@ -71,17 +71,6 @@ body {
 	-webkit-font-smoothing: antialiased;
 	overflow-x: hidden;
 	cursor: default;
-}
-
-/* the readout on the stage only tells the truth if the page sets it */
-p,
-li,
-h1,
-h2,
-h3,
-dd,
-figcaption {
-	cursor: text;
 }
 
 a,
