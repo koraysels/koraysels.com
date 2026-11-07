@@ -47,9 +47,21 @@
 
 		// Weave a rug to the band's size, a knot every few pixels, and weave it
 		// again if the band changes width. Same seed, so the same rug.
-		// ?field=meander (or bars, checker, fractal) weaves that field every time
+		// ?field=meander (or bars, checker, fractal) weaves that field every time.
+		// Otherwise each visit weaves a field other than the last one shown, so
+		// a few reloads go through all of them.
 		const asked = new URLSearchParams(location.search).get('field') ?? '';
-		const only = FIELDS.includes(asked) ? asked : undefined;
+		let last = '';
+		try {
+			last = localStorage.getItem('rug-field') ?? '';
+		} catch {}
+		const others = FIELDS.filter((f) => f !== last);
+		const only = FIELDS.includes(asked)
+			? asked
+			: others[Math.floor(Math.random() * others.length)];
+		try {
+			localStorage.setItem('rug-field', only);
+		} catch {}
 		let woven = 0;
 		const knot = () => (innerWidth < 700 ? 2 : 3);
 		const lay = () => {
