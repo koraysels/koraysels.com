@@ -37,6 +37,14 @@
 	--step-lead: 32px;
 
 	--gutter: clamp(16px, 3vw, 40px);
+
+	/* Spacing, on the 8px grid and keyed to the 24px body line: tight inside a
+	   group, a baseline or two between groups, three after the hero. */
+	--space-1: 8px;
+	--space-2: 16px;
+	--space-3: 24px;
+	--space-4: 48px;
+	--space-5: 72px;
 }
 
 *,

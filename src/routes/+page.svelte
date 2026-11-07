@@ -284,8 +284,8 @@
 	.top {
 		display: flex;
 		justify-content: space-between;
-		gap: 16px;
-		padding: 8px 0;
+		gap: var(--space-2);
+		padding: var(--space-1) 0;
 	}
 
 	/* hero: the carpet, and the name printed half over it */
@@ -375,18 +375,23 @@
 		font-size: var(--step-lead);
 		line-height: 40px;
 		max-width: 38ch; /* two lines on desktop */
-		margin-top: 24px;
+		margin-top: var(--space-3);
 	}
 
+	/* the role belongs to the tagline: kept close, then a long pause */
 	.role {
-		margin: 16px 0 96px;
+		margin: var(--space-1) 0 var(--space-5);
 	}
 
-	/* rows: the label sits over its content, in one column */
+	/* rows: the label sits tight over its content; rows a pause apart */
+	main {
+		display: grid;
+		gap: var(--space-4);
+	}
+
 	.row {
 		display: grid;
-		gap: 16px;
-		padding: 16px 0 64px;
+		gap: var(--space-1);
 	}
 
 	.row > :global(*) {
@@ -413,14 +418,14 @@
 	}
 
 	figcaption {
-		margin-top: 8px;
+		margin-top: var(--space-1);
 	}
 
 	.contact summary {
 		list-style: none;
 		display: flex;
 		align-items: baseline;
-		gap: 16px;
+		gap: var(--space-2);
 		font-size: var(--step-lead);
 		line-height: 40px;
 		width: fit-content;
@@ -445,9 +450,9 @@
 
 	form {
 		display: grid;
-		gap: 8px;
+		gap: var(--space-1);
 		max-width: 32rem;
-		margin-top: 24px;
+		margin-top: var(--space-3);
 	}
 
 	.hp {
@@ -457,7 +462,7 @@
 
 	label + input,
 	label + textarea {
-		margin-bottom: 16px;
+		margin-bottom: var(--space-2);
 	}
 
 	input,
@@ -467,7 +472,7 @@
 		background: var(--paper);
 		border: var(--rule) solid var(--ink);
 		border-radius: 0;
-		padding: 10px 12px;
+		padding: var(--space-1) var(--space-2);
 		width: 100%;
 	}
 
@@ -487,7 +492,7 @@
 		border: var(--rule) solid var(--ink);
 		background: var(--ink);
 		color: var(--paper);
-		padding: 10px 32px;
+		padding: var(--space-1) var(--space-3);
 	}
 
 	button[type='submit']:hover {
@@ -496,21 +501,18 @@
 	}
 
 	footer.row {
-		padding-bottom: 0;
+		margin-top: var(--space-4);
+		padding-bottom: var(--space-3);
 	}
 
 	@media (max-width: 760px) {
-		.row {
-			padding-bottom: 48px;
-		}
-
 		.names {
 			font-size: var(--step-body);
 			line-height: 24px;
 		}
 
 		.role {
-			margin-bottom: 64px;
+			margin-bottom: var(--space-4);
 		}
 
 		.pile {
