@@ -107,7 +107,7 @@ function bars(/** @type {() => number} */ rand, /** @type {number} */ rows) {
 /** A checkerboard pulled out of true by a swirl and a slow warp. */
 function checker(/** @type {() => number} */ rand, /** @type {number} */ cols, /** @type {number} */ rows) {
 	const n = noise(rand);
-	const size = 2 + Math.floor(rand() * 2);
+	const size = 3 + Math.floor(rand() * 3);
 	const cx = cols * (0.25 + rand() * 0.5);
 	const cy = rows * (0.3 + rand() * 0.4);
 	const twist = (rand() < 0.5 ? -1 : 1) * (1.2 + rand() * 1.4);
@@ -229,8 +229,8 @@ export function weave(seed, cols, rows, only) {
 
 	// Scale play: the field is woven coarser than the borders, and its grain
 	// swells across the rug, so fine and heavy knots meet in one piece.
-	const grain = 1 + Math.floor(rand() * 2);
-	const swell = 1 + rand() * 1.6;
+	const grain = 2 + Math.floor(rand() * 2);
+	const swell = 1.2 + rand() * 2;
 	const flip = rand() < 0.5;
 	const scaleAt = (/** @type {number} */ x) => {
 		const t = flip ? 1 - x / cols : x / cols;
