@@ -9,8 +9,8 @@
 		pink: [0xff, 0x48, 0xb0]
 	};
 
-	// The few pixels the pink pass lands off the blue one. Prerendered with
-	// one value; every visit then gets its own.
+	// The few pixels the rug's pink pass lands off the blue one. Prerendered
+	// with one value; every visit then gets its own. The name's is fixed.
 	let shift = $state({ x: 3, y: -2, turn: 0.12 });
 
 	let carpet: HTMLDivElement;
@@ -356,11 +356,12 @@
 		color: var(--pink);
 		/* the blue pass stays put; the pink pass alone lifts off on scroll */
 		will-change: transform;
+		/* a fixed offset, the same on every visit; only the rug's varies */
 		transform: translate(
-				calc(var(--mx) * 2.2 + var(--s, 0) * 0.01px),
-				calc(var(--my) * 2.2 - var(--s, 0) * 0.12px)
+				calc(6.6px + var(--s, 0) * 0.01px),
+				calc(-4.4px - var(--s, 0) * 0.12px)
 			)
-			rotate(var(--mr));
+			rotate(0.12deg);
 	}
 
 	.letter {
@@ -383,13 +384,15 @@
 		margin: 16px 0 96px;
 	}
 
-	/* rows: a label, then the thing */
-
+	/* rows: the label sits over its content, in one column */
 	.row {
 		display: grid;
-		grid-template-columns: minmax(160px, 1fr) 3fr;
-		gap: 16px var(--gutter);
+		gap: 16px;
 		padding: 16px 0 64px;
+	}
+
+	.row > :global(*) {
+		min-width: 0;
 	}
 
 	h2 {
@@ -500,7 +503,6 @@
 
 	@media (max-width: 760px) {
 		.row {
-			grid-template-columns: 1fr;
 			padding-bottom: 48px;
 		}
 
