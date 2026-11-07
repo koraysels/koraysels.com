@@ -501,9 +501,14 @@
 	}
 
 	@media (max-width: 760px) {
-		.names,
-		.line {
+		.names {
 			font-size: var(--step-body);
+			line-height: 24px;
+		}
+
+		/* a step above the body, off the bitmap's 16px grid by choice */
+		.line {
+			font-size: 18px;
 			line-height: 24px;
 		}
 
