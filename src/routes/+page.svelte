@@ -301,7 +301,6 @@
 		width: 100cqw;
 		margin-left: calc(50% - 50cqw);
 		height: clamp(240px, 40vh, 440px);
-		overflow: hidden;
 	}
 
 	/* --s is the eased scroll position, set by the script; 0 without it.
@@ -314,16 +313,15 @@
 		image-rendering: pixelated;
 		mix-blend-mode: multiply;
 		filter: url(#speckle);
-		will-change: transform;
-		transform: translateY(calc(var(--s, 0) * 0.05px));
 	}
 
-	/* the pink pass sinks a little faster and slides a little sideways, so the
+	/* the blue pass stays put; the pink one alone drifts a few pixels, so the
 	   misregistration opens as you scroll */
 	.ink.pink {
+		will-change: transform;
 		transform: translate(
-				calc(var(--mx) - var(--s, 0) * 0.012px),
-				calc(var(--my) + var(--s, 0) * 0.075px)
+				calc(var(--mx) - var(--s, 0) * 0.008px),
+				calc(var(--my) + var(--s, 0) * 0.02px)
 			)
 			rotate(var(--mr));
 	}
@@ -333,7 +331,7 @@
 		font-family: 'Satu Suro', 'Pixel Operator', monospace;
 		-webkit-font-smoothing: antialiased;
 		font-weight: 400;
-		font-size: clamp(64px, 15.5vw, 224px);
+		font-size: clamp(52px, 10.5vw, 152px);
 		line-height: 1;
 		letter-spacing: -0.09em;
 		/* only the cap line crosses the carpet: enough to overprint, not to drown */
