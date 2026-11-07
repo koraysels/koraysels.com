@@ -508,8 +508,8 @@
 
 		/* a step above the body, off the bitmap's 16px grid by choice */
 		.line {
-			font-size: 18px;
-			line-height: 24px;
+			font-size: 20px;
+			line-height: 32px;
 		}
 
 		.role {
