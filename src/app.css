@@ -84,7 +84,7 @@ body {
 	font-weight: 700;
 	-webkit-font-smoothing: none;
 	overflow-x: hidden;
-	cursor: default;
+	cursor: var(--cursor-arrow), default;
 	/* so 100cqw inside is the body's width, scrollbar excluded */
 	container-type: inline-size;
 }
@@ -105,7 +105,12 @@ a,
 button,
 label,
 summary {
-	cursor: pointer;
+	cursor: var(--cursor-hand), pointer;
+}
+
+input,
+textarea {
+	cursor: text;
 }
 
 h1,
