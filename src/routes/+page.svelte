@@ -2,18 +2,75 @@
 	import { onMount } from 'svelte';
 	import { profile, work } from '#lib/data';
 	import { pile } from '#lib/pile';
-	import { makeCarpet } from '#lib/carpet.js';
+	import { FIELDS, weave } from '#lib/rug.js';
 
-	const inks = { blue: '#3255a4', pink: '#ff48b0' };
+	const inks = {
+		blue: [0x32, 0x55, 0xa4],
+		pink: [0xff, 0x48, 0xb0]
+	};
 
-	// The prerendered page prints this carpet; every visit then prints its own.
-	let seed = $state(19960612);
-	const carpet = $derived(makeCarpet(seed, inks));
+	// The few pixels the pink pass lands off the blue one. Prerendered with
+	// one value; every visit then gets its own.
+	let shift = $state({ x: 3, y: -2, turn: 0.12 });
+
+	let carpet: HTMLDivElement;
+	let blueInk: HTMLDivElement;
+	let pinkInk: HTMLDivElement;
+	let field = $state('');
+
+	/** One ink pass as an image: a pixel per knot, inked where the code has its bit. */
+	function inkImage(codes: Uint8Array, cols: number, rows: number, bit: number, rgb: number[]) {
+		const canvas = document.createElement('canvas');
+		canvas.width = cols;
+		canvas.height = rows;
+		const ctx = canvas.getContext('2d')!;
+		const img = ctx.createImageData(cols, rows);
+		for (let i = 0; i < codes.length; i += 1) {
+			if (!(codes[i] & bit)) continue;
+			img.data[i * 4] = rgb[0];
+			img.data[i * 4 + 1] = rgb[1];
+			img.data[i * 4 + 2] = rgb[2];
+			img.data[i * 4 + 3] = 255;
+		}
+		ctx.putImageData(img, 0, 0);
+		return `url(${canvas.toDataURL()})`;
+	}
 
 	onMount(() => {
-		seed = (Math.random() * 2 ** 32) >>> 0;
+		const seed = (Math.random() * 2 ** 32) >>> 0;
+		const sign = () => (Math.random() < 0.5 ? -1 : 1);
+		shift = {
+			x: +(sign() * (2 + Math.random() * 3)).toFixed(1),
+			y: +(sign() * (1.5 + Math.random() * 3)).toFixed(1),
+			turn: +((Math.random() - 0.5) * 0.5).toFixed(2)
+		};
 
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		// Weave a rug to the band's size, a knot every few pixels, and weave it
+		// again if the band changes width. Same seed, so the same rug.
+		// ?field=meander (or bars, checker, fractal) weaves that field every time
+		const asked = new URLSearchParams(location.search).get('field') ?? '';
+		const only = FIELDS.includes(asked) ? asked : undefined;
+		let woven = 0;
+		const knot = () => (innerWidth < 700 ? 2 : 3);
+		const lay = () => {
+			const { width, height } = carpet.getBoundingClientRect();
+			if (Math.abs(width - woven) < 2) return;
+			woven = width;
+			const cols = Math.ceil(width / knot());
+			const rows = Math.ceil(height / knot());
+			const rug = weave(seed, cols, rows, only);
+			field = rug.field;
+			blueInk.style.backgroundImage = inkImage(rug.codes, cols, rows, 1, inks.blue);
+			pinkInk.style.backgroundImage = inkImage(rug.codes, cols, rows, 2, inks.pink);
+		};
+		let resize = 0;
+		const watch = new ResizeObserver(() => {
+			clearTimeout(resize);
+			resize = window.setTimeout(lay, woven ? 150 : 0);
+		});
+		watch.observe(carpet);
+
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => watch.disconnect();
 
 		// Scrolling drifts the two passes apart and lifts the name. The page
 		// eases toward the scroll position rather than following it, and only
@@ -39,6 +96,7 @@
 		onScroll();
 
 		return () => {
+			watch.disconnect();
 			removeEventListener('scroll', onScroll);
 			cancelAnimationFrame(frame);
 		};
@@ -93,8 +151,7 @@
 
 <div
 	class="page"
-	style="--mx: {carpet.shift.x}px; --my: {carpet.shift.y}px; --mr: {carpet.shift
-		.turn}deg; --carpet-blue: {carpet.blue}; --carpet-pink: {carpet.pink}; --carpet-size: {carpet.size}"
+	style="--mx: {shift.x}px; --my: {shift.y}px; --mr: {shift.turn}deg"
 >
 	<header class="top">
 		<p>{profile.company}</p>
@@ -102,9 +159,9 @@
 	</header>
 
 	<section class="hero">
-		<div class="carpet" aria-hidden="true">
-			<div class="ink blue"></div>
-			<div class="ink pink"></div>
+		<div class="carpet" aria-hidden="true" bind:this={carpet} data-field={field}>
+			<div class="ink blue" bind:this={blueInk}></div>
+			<div class="ink pink" bind:this={pinkInk}></div>
 		</div>
 		<h1 aria-label={profile.name}>{@render pass('blue')}{@render pass('pink')}</h1>
 		<p class="line">{profile.line}</p>
@@ -216,14 +273,13 @@
 		display: flex;
 		justify-content: space-between;
 		gap: 16px;
-		padding: 16px 0;
+		padding: 8px 0;
 	}
 
 	/* hero: the carpet, and the name printed half over it */
 
 	.hero {
 		position: relative;
-		padding-top: var(--gutter);
 	}
 
 	/* edge to edge: out of the page's margins to the full width of the body.
@@ -232,17 +288,18 @@
 		position: relative;
 		width: 100cqw;
 		margin-left: calc(50% - 50cqw);
-		height: clamp(240px, 44vh, 480px);
+		height: clamp(240px, 40vh, 440px);
 		overflow: hidden;
 	}
 
 	/* --s is the eased scroll position, set by the script; 0 without it.
-	   The layers overhang the carpet so drifting never shows an edge. */
+	   Each layer is one image, a pixel per knot, stretched to the band. */
 	.ink {
 		position: absolute;
-		inset: -64px;
-		background-image: var(--carpet-blue);
-		background-size: var(--carpet-size);
+		inset: 0;
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		image-rendering: pixelated;
 		mix-blend-mode: multiply;
 		filter: url(#speckle);
 		will-change: transform;
@@ -252,7 +309,6 @@
 	/* the pink pass sinks a little faster and slides a little sideways, so the
 	   misregistration opens as you scroll */
 	.ink.pink {
-		background-image: var(--carpet-pink);
 		transform: translate(
 				calc(var(--mx) - var(--s, 0) * 0.012px),
 				calc(var(--my) + var(--s, 0) * 0.075px)
@@ -271,9 +327,6 @@
 		/* only the cap line crosses the carpet: enough to overprint, not to drown */
 		margin-top: -0.2em;
 		position: relative;
-		/* parallax: the name lifts off the carpet faster than the page scrolls */
-		will-change: transform;
-		transform: translateY(calc(var(--s, 0) * -0.12px));
 	}
 
 	/* the name, in two passes that never quite line up */
@@ -289,9 +342,11 @@
 
 	.pass.pink {
 		color: var(--pink);
+		/* the blue pass stays put; the pink pass alone lifts off on scroll */
+		will-change: transform;
 		transform: translate(
 				calc(var(--mx) * 2.2 + var(--s, 0) * 0.01px),
-				calc(var(--my) * 2.2 + var(--s, 0) * 0.016px)
+				calc(var(--my) * 2.2 - var(--s, 0) * 0.12px)
 			)
 			rotate(var(--mr));
 	}
