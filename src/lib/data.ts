@@ -21,6 +21,8 @@ export const work: { name: string; href?: string }[] = [
 	{ name: 'Het Entrepot', href: 'https://hetentrepot.be' },
 	{ name: 'De Veerman', href: 'https://www.veerman.be' },
 	{ name: 'KVS', href: 'https://www.kvs.be' },
+	{ name: 'Stad Antwerpen' },
+	{ name: 'Sinksenfoor' },
 	{ name: 'Kavka', href: 'https://kavka.be' },
 	{ name: 'Arenberg Spotlight', href: 'https://arenberg.be' },
 	{ name: 'Stadsdichters', href: 'https://stadsdichters.be' },
