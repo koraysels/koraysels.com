@@ -12,6 +12,36 @@
 
 	onMount(() => {
 		seed = (Math.random() * 2 ** 32) >>> 0;
+
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		// Scrolling drifts the two passes apart and lifts the name. The page
+		// eases toward the scroll position rather than following it, and only
+		// over the first screen or so, where the carpet is.
+		const root = document.documentElement;
+		let target = 0;
+		let current = 0;
+		let frame = 0;
+
+		const tick = () => {
+			current += (target - current) * 0.09;
+			if (Math.abs(target - current) < 0.05) current = target;
+			root.style.setProperty('--s', current.toFixed(2));
+			frame = current === target ? 0 : requestAnimationFrame(tick);
+		};
+
+		const onScroll = () => {
+			target = Math.min(window.scrollY, 900);
+			if (!frame) frame = requestAnimationFrame(tick);
+		};
+
+		addEventListener('scroll', onScroll, { passive: true });
+		onScroll();
+
+		return () => {
+			removeEventListener('scroll', onScroll);
+			cancelAnimationFrame(frame);
+		};
 	});
 
 	// Satu Suro has no alternates: its lowercase is a copy of its caps, so the two
@@ -82,8 +112,7 @@
 
 	<main>
 		<section class="row">
-			<h2>Also</h2>
-			<p>{profile.role}</p>
+			<p class="unlabelled">{profile.role}</p>
 		</section>
 
 		<section class="row">
@@ -210,20 +239,29 @@
 		overflow: hidden;
 	}
 
+	/* --s is the eased scroll position, set by the script; 0 without it.
+	   The layers overhang the carpet so drifting never shows an edge. */
 	.ink {
 		position: absolute;
-		inset: -12px;
+		inset: -64px;
 		background-image: var(--carpet-blue);
 		background-size: var(--carpet-size);
 		mix-blend-mode: multiply;
 		filter: url(#speckle);
+		will-change: transform;
+		transform: translateY(calc(var(--s, 0) * 0.05px));
 	}
 
+	/* the pink pass sinks a little faster and slides a little sideways, so the
+	   misregistration opens as you scroll */
 	.ink.pink {
 		background-image: var(--carpet-pink);
-		transform: translate(var(--mx), var(--my)) rotate(var(--mr));
+		transform: translate(
+				calc(var(--mx) - var(--s, 0) * 0.012px),
+				calc(var(--my) + var(--s, 0) * 0.075px)
+			)
+			rotate(var(--mr));
 	}
-
 
 	h1 {
 		display: grid;
@@ -236,6 +274,9 @@
 		/* only the cap line crosses the carpet: enough to overprint, not to drown */
 		margin-top: -0.2em;
 		position: relative;
+		/* parallax: the name lifts off the carpet faster than the page scrolls */
+		will-change: transform;
+		transform: translateY(calc(var(--s, 0) * -0.12px));
 	}
 
 	/* the name, in two passes that never quite line up */
@@ -251,7 +292,11 @@
 
 	.pass.pink {
 		color: var(--pink);
-		transform: translate(calc(var(--mx) * 2.2), calc(var(--my) * 2.2)) rotate(var(--mr));
+		transform: translate(
+				calc(var(--mx) * 2.2 + var(--s, 0) * 0.01px),
+				calc(var(--my) * 2.2 + var(--s, 0) * 0.016px)
+			)
+			rotate(var(--mr));
 	}
 
 	.letter {
@@ -281,6 +326,11 @@
 
 	h2 {
 		font-size: var(--step-small);
+	}
+
+	/* a row with nothing to label still lines up with the others */
+	.unlabelled {
+		grid-column: 2;
 	}
 
 	.names {
@@ -389,6 +439,10 @@
 		.row {
 			grid-template-columns: 1fr;
 			padding-bottom: 48px;
+		}
+
+		.unlabelled {
+			grid-column: auto;
 		}
 
 		.names {
