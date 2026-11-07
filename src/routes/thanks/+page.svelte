@@ -29,7 +29,6 @@
 		display: flex;
 		justify-content: space-between;
 		padding: 16px 0;
-		border-bottom: var(--rule) solid var(--ink);
 	}
 
 	main {

@@ -7,11 +7,11 @@
  *   - each cell holds one primitive or nothing: zigzag, ring, disc, triangle,
  *     squiggle, dot grid, cross, half-disc, diamond, bar
  *   - rotations snap to 15 degrees; strokes are one weight, cut square
- *   - printed as two riso passes, one per ink, so the pink pass carries a
+ *   - printed as two passes, one per ink, so the pink pass carries a
  *     halftone ground and the odd shape lands in both inks to overprint
  *
  * The pink pass comes back with its own misregistration, the few pixels a
- * real riso drum drifts between passes.
+ * print drum drifts between passes.
  */
 
 const CELL = 60;

@@ -20,7 +20,7 @@
 }
 
 :root {
-	/* Two riso inks on uncoated paper. Blue carries every word; pink is the
+	/* Two spot inks on uncoated paper. Blue carries every word; pink is the
 	   second pass. Where they cross they multiply into a purple of their own. */
 	--paper: #f2ede1;
 	--blue: #3255a4;
@@ -87,7 +87,7 @@ body {
 	cursor: default;
 }
 
-/* Paper tooth over everything: fibres and dust that a riso drum prints round. */
+/* Paper tooth over everything: fibres and dust that the ink prints round. */
 body::after {
 	content: '';
 	position: fixed;

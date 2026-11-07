@@ -58,9 +58,9 @@
 	>
 {/snippet}
 
-<!-- Ink that does not quite cover: a riso drum leaves specks of paper. -->
+<!-- Ink that does not quite cover: the drum leaves specks of paper. -->
 <svg class="defs" width="0" height="0" aria-hidden="true">
-	<filter id="riso" x="0" y="0" width="100%" height="100%">
+	<filter id="speckle" x="0" y="0" width="100%" height="100%">
 		<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" />
 		<feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 2.1" />
 		<feComposite in="SourceGraphic" operator="in" />
@@ -200,7 +200,6 @@
 		justify-content: space-between;
 		gap: 16px;
 		padding: 16px 0;
-		border-bottom: var(--rule) solid var(--ink);
 	}
 
 	/* hero: the carpet, and the name printed half over it */
@@ -222,7 +221,7 @@
 		background-image: var(--carpet-blue);
 		background-size: var(--carpet-size);
 		mix-blend-mode: multiply;
-		filter: url(#riso);
+		filter: url(#speckle);
 	}
 
 	.ink.pink {
@@ -262,7 +261,7 @@
 	.pass {
 		grid-area: 1 / 1;
 		mix-blend-mode: multiply;
-		filter: url(#riso);
+		filter: url(#speckle);
 	}
 
 	.pass.blue {
@@ -286,17 +285,16 @@
 	.line {
 		font-size: var(--step-lead);
 		line-height: 40px;
-		max-width: 28ch;
+		max-width: 38ch; /* two lines on desktop */
 		margin: 24px 0 96px;
 	}
 
-	/* rows: a label, a rule, the thing */
+	/* rows: a label, then the thing */
 
 	.row {
 		display: grid;
 		grid-template-columns: minmax(160px, 1fr) 3fr;
 		gap: 16px var(--gutter);
-		border-top: var(--rule) solid var(--ink);
 		padding: 16px 0 64px;
 	}
 
