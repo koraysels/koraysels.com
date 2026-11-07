@@ -1,6 +1,24 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { profile, work } from '#lib/data';
 	import { pile } from '#lib/pile';
+	import { makeCarpet } from '#lib/carpet.js';
+
+	const inks = { blue: '#3255a4', pink: '#ff48b0' };
+
+	// The prerendered page prints this carpet; every visit then prints its own.
+	let seed = $state(19960612);
+	let live = $state(false);
+	const carpet = $derived(makeCarpet(seed, inks));
+
+	function reprint() {
+		seed = (Math.random() * 2 ** 32) >>> 0;
+	}
+
+	onMount(() => {
+		reprint();
+		live = true;
+	});
 
 	// Satu Suro has no alternates: its lowercase is a copy of its caps, so the two
 	// S's in the name come out identical. Nudge every letter a little instead.
@@ -29,136 +47,231 @@
 	<meta name="description" content="{profile.name}. {profile.line} {profile.city}." />
 </svelte:head>
 
-<div class="frame">
-	<main class="sheet">
-	<p class="mark">{profile.company}</p>
+{#snippet pass(ink: string)}
+	<span class="pass {ink}" aria-hidden="true"
+		>{#each letters as char, i (i)}<span
+				class="letter"
+				class:space={char === ' '}
+				style="transform: {wobble(char, i)}; margin-right: {kern[i] ?? '0'}"
+				>{char === ' ' ? ' ' : char}</span
+			>{/each}</span
+	>
+{/snippet}
 
-	<header>
-		<h1 aria-label={profile.name}>
-			<span aria-hidden="true"
-				>{#each letters as char, i (i)}<span
-						class="letter"
-						class:space={char === ' '}
-						style="transform: {wobble(char, i)}; margin-right: {kern[i] ?? '0'}"
-						>{char === ' ' ? '\u00a0' : char}</span
-					>{/each}</span
-			>
-		</h1>
-		<p class="line">{profile.line}</p>
-		<p class="role">{profile.role}</p>
+<!-- Ink that does not quite cover: a riso drum leaves specks of paper. -->
+<svg class="defs" width="0" height="0" aria-hidden="true">
+	<filter id="riso" x="0" y="0" width="100%" height="100%">
+		<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" />
+		<feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 2.1" />
+		<feComposite in="SourceGraphic" operator="in" />
+	</filter>
+</svg>
+
+<div
+	class="page"
+	style="--mx: {carpet.shift.x}px; --my: {carpet.shift.y}px; --mr: {carpet.shift
+		.turn}deg; --carpet-blue: {carpet.blue}; --carpet-pink: {carpet.pink}; --carpet-size: {carpet.size}"
+>
+	<header class="top">
+		<p>{profile.company}</p>
+		<p><a href="mailto:{profile.email}">{profile.email}</a></p>
 	</header>
 
-	<section>
-		<h2>Earlier work</h2>
-		<p class="names">
-			{#each work as item, i (item.name)}{#if item.href}<a href={item.href}>{item.name}</a
-					>{:else}{item.name}{/if}{#if i < work.length - 1}{', '}{/if}{/each}.
-		</p>
+	<section class="hero">
+		<div class="carpet" aria-hidden="true">
+			<div class="ink blue"></div>
+			<div class="ink pink"></div>
+		</div>
+		{#if live}
+			<button class="reprint" type="button" onclick={reprint}>Reprint</button>
+		{/if}
+		<h1 aria-label={profile.name}>{@render pass('blue')}{@render pass('pink')}</h1>
+		<p class="line">{profile.line}</p>
 	</section>
 
-	{#if pile.length}
-		<section>
-			<h2>The pile</h2>
-			<div class="pile">
-				{#each pile as item, i (i)}
-					{#if item.kind === 'image'}
-						<figure>
-							<img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
-							<figcaption>{item.caption}</figcaption>
-						</figure>
-					{:else if item.kind === 'video'}
-						<figure>
-							<video
-								src={item.src}
-								poster={item.poster}
-								muted
-								loop
-								playsinline
-								autoplay
-								aria-label={item.caption}
-							></video>
-							<figcaption>{item.caption}</figcaption>
-						</figure>
-					{:else}
-						<p><a href={item.href}>{item.title}</a></p>
-					{/if}
-				{/each}
-			</div>
+	<main>
+		<section class="row">
+			<h2>Also</h2>
+			<p>{profile.role}</p>
 		</section>
-	{/if}
 
-	<section>
-		<details class="contact">
-			<summary>Get in touch</summary>
-			<form
-			name="contact"
-			method="POST"
-			action="/thanks"
-			data-netlify="true"
-			netlify-honeypot="bot-field"
-		>
-			<input type="hidden" name="form-name" value="contact" />
-			<p class="hp">
-				<label>Leave this empty <input name="bot-field" tabindex="-1" /></label>
+		<section class="row">
+			<h2>Earlier work</h2>
+			<p class="names">
+				{#each work as item, i (item.name)}{#if item.href}<a href={item.href}>{item.name}</a
+						>{:else}{item.name}{/if}{#if i < work.length - 1}{', '}{/if}{/each}.
 			</p>
+		</section>
 
-			<label for="name">Name</label>
-			<input id="name" name="name" type="text" required autocomplete="name" />
+		{#if pile.length}
+			<section class="row">
+				<h2>The pile</h2>
+				<div class="pile">
+					{#each pile as item, i (i)}
+						{#if item.kind === 'image'}
+							<figure>
+								<img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
+								<figcaption>{item.caption}</figcaption>
+							</figure>
+						{:else if item.kind === 'video'}
+							<figure>
+								<video
+									src={item.src}
+									poster={item.poster}
+									muted
+									loop
+									playsinline
+									autoplay
+									aria-label={item.caption}
+								></video>
+								<figcaption>{item.caption}</figcaption>
+							</figure>
+						{:else}
+							<p><a href={item.href}>{item.title}</a></p>
+						{/if}
+					{/each}
+				</div>
+			</section>
+		{/if}
 
-			<label for="email">Email</label>
-			<input id="email" name="email" type="email" required autocomplete="email" />
+		<section class="row">
+			<h2>Contact</h2>
+			<details class="contact">
+				<summary>Get in touch</summary>
+				<form
+					name="contact"
+					method="POST"
+					action="/thanks"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+				>
+					<input type="hidden" name="form-name" value="contact" />
+					<p class="hp">
+						<label>Leave this empty <input name="bot-field" tabindex="-1" /></label>
+					</p>
 
-			<label for="message">Message</label>
-			<textarea id="message" name="message" rows="5" required></textarea>
+					<label for="name">Name</label>
+					<input id="name" name="name" type="text" required autocomplete="name" />
 
-				<button type="submit">Send</button>
-			</form>
-		</details>
-	</section>
+					<label for="email">Email</label>
+					<input id="email" name="email" type="email" required autocomplete="email" />
 
-	<footer>
+					<label for="message">Message</label>
+					<textarea id="message" name="message" rows="5" required></textarea>
+
+					<button type="submit">Send</button>
+				</form>
+			</details>
+		</section>
+
+		<section class="row">
+			<h2>Elsewhere</h2>
+			<p>
+				{#each profile.socials as social, i (social.href)}<a href={social.href} rel="me"
+						>{social.label}</a
+					>{#if i < profile.socials.length - 1}{', '}{/if}{/each}
+			</p>
+		</section>
+	</main>
+
+	<footer class="row">
+		<h2>Company</h2>
 		<p>
 			{profile.company}<br />
 			{profile.city}<br />
-			VAT {profile.vat}<br />
-			<a href="mailto:{profile.email}">{profile.email}</a>
-		</p>
-		<p>
-			{#each profile.socials as social, i (social.href)}<a href={social.href} rel="me"
-					>{social.label}</a
-				>{#if i < profile.socials.length - 1}{', '}{/if}{/each}
+			VAT {profile.vat}
 		</p>
 	</footer>
-	</main>
 </div>
 
 <style>
-	.sheet {
-		/* The blocks the edge would have been anti-aliased with, left visible. */
-		background:
-			var(--crumbs) var(--bg);
-		background-position: var(--crumbs-at);
-		background-size: var(--crumbs-size);
-		background-repeat: no-repeat;
-		padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.75rem, 5vw, 4rem) clamp(1.75rem, 5vw, 4rem);
-		display: grid;
-		gap: clamp(2.5rem, 5vw, 4rem);
+	.defs {
+		position: absolute;
 	}
 
-	.mark {
-		font-size: var(--step-small);
-		color: var(--muted);
-		margin-bottom: calc(-1 * clamp(1.6rem, 3.4vw, 2.8rem));
+	.page {
+		max-width: 1440px;
+		margin: 0 auto;
+		padding: 0 var(--gutter) var(--gutter);
+	}
+
+	.top {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 16px 0;
+		border-bottom: var(--rule) solid var(--ink);
+	}
+
+	/* hero: the carpet, and the name printed half over it */
+
+	.hero {
+		position: relative;
+		padding-top: var(--gutter);
+	}
+
+	.carpet {
+		position: relative;
+		height: clamp(240px, 44vh, 480px);
+		overflow: hidden;
+	}
+
+	.ink {
+		position: absolute;
+		inset: -12px;
+		background-image: var(--carpet-blue);
+		background-size: var(--carpet-size);
+		mix-blend-mode: multiply;
+		filter: url(#riso);
+	}
+
+	.ink.pink {
+		background-image: var(--carpet-pink);
+		transform: translate(var(--mx), var(--my)) rotate(var(--mr));
+	}
+
+	.reprint {
+		position: absolute;
+		top: calc(var(--gutter) + 16px);
+		right: 16px;
+		font: inherit;
+		color: var(--ink);
+		background: var(--paper);
+		border: var(--rule) solid var(--ink);
+		padding: 4px 12px;
+	}
+
+	.reprint:hover {
+		background: var(--pink);
 	}
 
 	h1 {
-		font-size: var(--title);
+		display: grid;
+		font-family: 'Satu Suro', 'Pixel Operator', monospace;
+		-webkit-font-smoothing: antialiased;
+		font-weight: 400;
+		font-size: clamp(64px, 15.5vw, 224px);
+		line-height: 1;
 		letter-spacing: -0.09em;
-		line-height: 1.25;
-		color: var(--ink-display);
-		-webkit-text-stroke: var(--title-stroke) var(--ink-outline);
-		paint-order: stroke fill;
-		margin-bottom: 1.1rem;
+		/* only the cap line crosses the carpet: enough to overprint, not to drown */
+		margin-top: -0.2em;
+		position: relative;
+	}
+
+	/* the name, in two passes that never quite line up */
+	.pass {
+		grid-area: 1 / 1;
+		mix-blend-mode: multiply;
+		filter: url(#riso);
+	}
+
+	.pass.blue {
+		color: var(--blue);
+	}
+
+	.pass.pink {
+		color: var(--pink);
+		transform: translate(calc(var(--mx) * 2.2), calc(var(--my) * 2.2)) rotate(var(--mr));
 	}
 
 	.letter {
@@ -171,55 +284,52 @@
 	}
 
 	.line {
-		max-width: 44ch;
+		font-size: var(--step-lead);
+		line-height: 40px;
+		max-width: 28ch;
+		margin: 24px 0 96px;
 	}
 
-	.role {
-		margin-top: 0.5rem;
-		max-width: 34ch;
-		color: var(--muted);
+	/* rows: a label, a rule, the thing */
+
+	.row {
+		display: grid;
+		grid-template-columns: minmax(160px, 1fr) 3fr;
+		gap: 16px var(--gutter);
+		border-top: var(--rule) solid var(--ink);
+		padding: 16px 0 64px;
 	}
 
 	h2 {
 		font-size: var(--step-small);
-		font-weight: 600;
-		letter-spacing: 0;
-		line-height: 1.5;
-		color: var(--accent);
-		margin-bottom: 0.9rem;
 	}
 
 	.names {
-		line-height: 1.6;
-	}
-
-	.names a {
-		text-decoration-color: #b9bdc9;
+		font-size: var(--step-lead);
+		line-height: 40px;
 	}
 
 	.pile {
 		columns: 2;
-		column-gap: 1.25rem;
+		column-gap: var(--gutter);
 	}
 
 	.pile > * {
 		break-inside: avoid;
-		margin-bottom: 1.25rem;
+		margin-bottom: var(--gutter);
 	}
 
 	figcaption {
-		font-size: var(--step-small);
-		color: var(--muted);
-		margin-top: 0.4rem;
+		margin-top: 8px;
 	}
 
 	.contact summary {
 		list-style: none;
 		display: flex;
 		align-items: baseline;
-		gap: 0.6rem;
-		font-size: var(--step-body);
-		font-weight: 600;
+		gap: 16px;
+		font-size: var(--step-lead);
+		line-height: 40px;
 		width: fit-content;
 	}
 
@@ -229,10 +339,7 @@
 
 	.contact summary::before {
 		content: '+';
-		display: inline-block;
 		width: 1ch;
-		color: var(--muted);
-		font-weight: 400;
 	}
 
 	.contact[open] summary::before {
@@ -240,14 +347,14 @@
 	}
 
 	.contact summary:hover {
-		color: var(--accent);
+		background: var(--pink);
 	}
 
 	form {
 		display: grid;
-		gap: 0.35rem;
-		max-width: 30rem;
-		margin-top: 1.5rem;
+		gap: 8px;
+		max-width: 32rem;
+		margin-top: 24px;
 	}
 
 	.hp {
@@ -255,24 +362,19 @@
 		left: -9999px;
 	}
 
-	label {
-		font-size: var(--step-small);
-		color: var(--muted);
-	}
-
 	label + input,
 	label + textarea {
-		margin-bottom: 1rem;
+		margin-bottom: 16px;
 	}
 
 	input,
 	textarea {
 		font: inherit;
-		font-size: var(--step-body);
 		color: var(--ink);
-		background: var(--field);
-		border: 0;
-		padding: 0.7rem 0.8rem;
+		background: var(--paper);
+		border: var(--rule) solid var(--ink);
+		border-radius: 0;
+		padding: 10px 12px;
 		width: 100%;
 	}
 
@@ -282,43 +384,43 @@
 
 	input:focus,
 	textarea:focus {
-		outline: 2px solid var(--accent);
-		outline-offset: -2px;
+		outline: var(--rule) solid var(--pink);
+		outline-offset: 0;
 	}
 
-	button {
+	button[type='submit'] {
 		justify-self: start;
-		margin-top: 0.5rem;
 		font: inherit;
-		font-weight: 600;
-		border: 0;
+		border: var(--rule) solid var(--ink);
 		background: var(--ink);
-		color: #ffffff;
-		padding: 0.75rem 1.5rem;
-		transition: background 160ms var(--ease);
+		color: var(--paper);
+		padding: 10px 32px;
 	}
 
-	button:hover {
-		background: var(--accent);
-		color: var(--accent-ink);
-	}
-
-	footer {
-		display: grid;
-		gap: 1.25rem;
-		font-size: var(--step-small);
-		color: var(--muted);
-	}
-
-	footer a {
-		color: var(--muted);
-	}
-
-	footer a:hover {
+	button[type='submit']:hover {
+		background: var(--pink);
 		color: var(--ink);
 	}
 
-	@media (max-width: 620px) {
+	footer.row {
+		padding-bottom: 0;
+	}
+
+	@media (max-width: 760px) {
+		.row {
+			grid-template-columns: 1fr;
+			padding-bottom: 48px;
+		}
+
+		.names {
+			font-size: var(--step-body);
+			line-height: 24px;
+		}
+
+		.line {
+			margin-bottom: 64px;
+		}
+
 		.pile {
 			columns: 1;
 		}
