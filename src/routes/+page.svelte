@@ -108,13 +108,10 @@
 		</div>
 		<h1 aria-label={profile.name}>{@render pass('blue')}{@render pass('pink')}</h1>
 		<p class="line">{profile.line}</p>
+		<p class="role">{profile.role}</p>
 	</section>
 
 	<main>
-		<section class="row">
-			<p class="unlabelled">{profile.role}</p>
-		</section>
-
 		<section class="row">
 			<h2>Earlier work</h2>
 			<p class="names">
@@ -312,7 +309,11 @@
 		font-size: var(--step-lead);
 		line-height: 40px;
 		max-width: 38ch; /* two lines on desktop */
-		margin: 24px 0 96px;
+		margin-top: 24px;
+	}
+
+	.role {
+		margin: 16px 0 96px;
 	}
 
 	/* rows: a label, then the thing */
@@ -326,11 +327,6 @@
 
 	h2 {
 		font-size: var(--step-small);
-	}
-
-	/* a row with nothing to label still lines up with the others */
-	.unlabelled {
-		grid-column: 2;
 	}
 
 	.names {
@@ -441,16 +437,12 @@
 			padding-bottom: 48px;
 		}
 
-		.unlabelled {
-			grid-column: auto;
-		}
-
 		.names {
 			font-size: var(--step-body);
 			line-height: 24px;
 		}
 
-		.line {
+		.role {
 			margin-bottom: 64px;
 		}
 
