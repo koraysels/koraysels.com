@@ -134,7 +134,12 @@
 
 <style>
 	.sheet {
-		background: var(--bg);
+		/* The blocks the edge would have been anti-aliased with, left visible. */
+		background:
+			var(--crumbs) var(--bg);
+		background-position: var(--crumbs-at);
+		background-size: var(--crumbs-size);
+		background-repeat: no-repeat;
 		padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.75rem, 5vw, 4rem) clamp(1.75rem, 5vw, 4rem);
 		display: grid;
 		gap: clamp(2.5rem, 5vw, 4rem);

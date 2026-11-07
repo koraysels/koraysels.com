@@ -192,44 +192,118 @@ export function makeEdge(seed) {
 	};
 	const pick = (/** @type {any[]} */ arr) => arr[Math.floor(rand() * arr.length)];
 
-	/** One edge: a staircase of steps, each one cell deep, in cells of mixed width. */
+	/**
+	 * One edge, as offsets along it paired with the inset at that offset.
+	 * Every run is axis-aligned: a long run at one inset, a vertical hop of one
+	 * cell, another long run. It starts and ends at the baseline inset, so the
+	 * straight middle of the edge and the next corner both meet it flat.
+	 */
 	const stair = (/** @type {number} */ limit, /** @type {number[]} */ cells) => {
 		/** @type {[number, number][]} */
 		const out = [];
 		let at = 0;
 		let depth = 1;
-		while (at < limit) {
-			const w = pick(cells) * (rand() < 0.3 ? 2 : 1);
-			out.push([at, depth * ROW]);
+		const run = (/** @type {number} */ w, /** @type {number} */ d) => {
+			out.push([at, d * ROW]);
 			at += w;
-			out.push([at, depth * ROW]);
+			out.push([at, d * ROW]);
+		};
+		while (at < limit) {
+			// Long runs between the steps: a few wide teeth, not a comb.
+			run(pick(cells) * pick([2, 3, 3, 4, 5, 7]), depth);
 			// One cell at a time, never two: the edge is nibbled, not castellated.
 			depth = Math.min(2, Math.max(0, depth + pick([-1, 0, 0, 1])));
 		}
+		out.push([at, ROW]);
 		return out;
 	};
 
-	const H = 150; // px of staircase at each end of the horizontal edges
-	const V = 170; // and of the vertical ones
+	const H = 280; // px of staircase at each end of the horizontal edges
+	const V = 300; // and of the vertical ones
 	const h = () => stair(H, COLW);
-	const v = () => stair(V, [ROW, ROW, ROW * 1.4, ROW * 0.8]);
+	const v = () => stair(V, [ROW, ROW * 2]);
 
+	// Every edge is laid from its corner inward, and every corner sits at the
+	// baseline inset on both axes, so no two points are joined by a diagonal.
 	const pts = [];
-	for (const [x, d] of h()) pts.push(`${x}px ${d}px`);
+	for (const [x, d] of h()) pts.push(`${ROW + x}px ${d}px`);
 	pts.push(`50% ${ROW}px`);
-	for (const [x, d] of h().reverse()) pts.push(`calc(100% - ${x}px) ${d}px`);
+	for (const [x, d] of h().reverse()) pts.push(`calc(100% - ${ROW + x}px) ${d}px`);
 
-	for (const [y, d] of v()) pts.push(`calc(100% - ${d}px) ${y}px`);
+	for (const [y, d] of v()) pts.push(`calc(100% - ${d}px) ${ROW + y}px`);
 	pts.push(`calc(100% - ${ROW}px) 50%`);
-	for (const [y, d] of v().reverse()) pts.push(`calc(100% - ${d}px) calc(100% - ${y}px)`);
+	for (const [y, d] of v().reverse())
+		pts.push(`calc(100% - ${d}px) calc(100% - ${ROW + y}px)`);
 
-	for (const [x, d] of h()) pts.push(`calc(100% - ${x}px) calc(100% - ${d}px)`);
+	for (const [x, d] of h()) pts.push(`calc(100% - ${ROW + x}px) calc(100% - ${d}px)`);
 	pts.push(`50% calc(100% - ${ROW}px)`);
-	for (const [x, d] of h().reverse()) pts.push(`${x}px calc(100% - ${d}px)`);
+	for (const [x, d] of h().reverse()) pts.push(`${ROW + x}px calc(100% - ${d}px)`);
 
-	for (const [y, d] of v()) pts.push(`${d}px calc(100% - ${y}px)`);
+	for (const [y, d] of v()) pts.push(`${d}px calc(100% - ${ROW + y}px)`);
 	pts.push(`${ROW}px 50%`);
-	for (const [y, d] of v().reverse()) pts.push(`${d}px ${y}px`);
+	for (const [y, d] of v().reverse()) pts.push(`${d}px ${ROW + y}px`);
 
 	return `polygon(${pts.join(',')})`;
+}
+
+const CRUMB_W = 240; // the corner patch the crumbs are drawn in
+const CRUMB_H = 170;
+
+/**
+ * The blocks a pixel edge would have been anti-aliased with, left visible:
+ * loose cells of the border's ink scattered just inside a corner of the sheet,
+ * thinning out as they go inward.
+ *
+ * Returns the four corner patches as a ready background shorthand, since each
+ * corner is the same patch mirrored.
+ *
+ * @param {number} seed
+ * @param {string} ink
+ */
+export function makeCrumbs(seed, ink = '#0b1412') {
+	let a = seed >>> 0 || 1;
+	const rand = () => {
+		a ^= a << 13;
+		a >>>= 0;
+		a ^= a >> 17;
+		a ^= a << 5;
+		a >>>= 0;
+		return a / 4294967296;
+	};
+	const pick = (/** @type {any[]} */ arr) => arr[Math.floor(rand() * arr.length)];
+
+	const REACH = 3; // cells: how far from the edge a crumb can land
+	const rects = [];
+	for (let y = 0; y < CRUMB_H; y += ROW) {
+		let x = 0;
+		while (x < CRUMB_W) {
+			const w = pick(COLW);
+			// Only along the two edges of the corner, thinning out as they go in.
+			const cells = Math.min(x / ROW, y / ROW);
+			if (cells < REACH && rand() < 0.3 * (1 - cells / REACH)) {
+				rects.push(`<rect x="${x}" y="${y}" width="${w}" height="${ROW}"/>`);
+			}
+			x += w;
+		}
+	}
+
+	/** The same patch, mirrored into each corner. */
+	const corner = (/** @type {string} */ flip) => {
+		const svg =
+			`<svg xmlns="http://www.w3.org/2000/svg" width="${CRUMB_W}" height="${CRUMB_H}" ` +
+			`viewBox="0 0 ${CRUMB_W} ${CRUMB_H}" shape-rendering="crispEdges">` +
+			`<g fill="${ink}" transform="${flip}">${rects.join('')}</g></svg>`;
+		return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+	};
+
+	return {
+		image: [
+			corner('translate(0,0)'),
+			corner(`translate(${CRUMB_W},0) scale(-1,1)`),
+			corner(`translate(0,${CRUMB_H}) scale(1,-1)`),
+			corner(`translate(${CRUMB_W},${CRUMB_H}) scale(-1,-1)`)
+		].join(','),
+		position: '0 0,100% 0,0 100%,100% 100%',
+		size: `${CRUMB_W}px ${CRUMB_H}px`
+	};
 }

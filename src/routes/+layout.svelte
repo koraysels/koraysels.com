@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { makeEdge, makePattern } from '#lib/pattern.js';
+	import { makeCrumbs, makeEdge, makePattern } from '#lib/pattern.js';
 	import '../app.css';
 
 	let { children } = $props();
@@ -17,6 +17,11 @@
 		);
 		root.style.setProperty('--tile', `${width}px ${height}px`);
 		root.style.setProperty('--torn', makeEdge(seed));
+
+		const crumbs = makeCrumbs(seed);
+		root.style.setProperty('--crumbs', crumbs.image);
+		root.style.setProperty('--crumbs-at', crumbs.position);
+		root.style.setProperty('--crumbs-size', crumbs.size);
 	});
 </script>
 
