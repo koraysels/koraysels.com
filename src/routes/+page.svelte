@@ -209,8 +209,12 @@
 		padding-top: var(--gutter);
 	}
 
+	/* edge to edge: out of the page's margins to the full width of the body.
+	   cqw, not vw, which would count the scrollbar and overhang it. */
 	.carpet {
 		position: relative;
+		width: 100cqw;
+		margin-left: calc(50% - 50cqw);
 		height: clamp(240px, 44vh, 480px);
 		overflow: hidden;
 	}
@@ -232,7 +236,7 @@
 	.reprint {
 		position: absolute;
 		top: calc(var(--gutter) + 16px);
-		right: 16px;
+		right: 0;
 		font: inherit;
 		color: var(--ink);
 		background: var(--paper);

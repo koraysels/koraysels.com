@@ -85,6 +85,8 @@ body {
 	-webkit-font-smoothing: none;
 	overflow-x: hidden;
 	cursor: default;
+	/* so 100cqw inside is the body's width, scrollbar excluded */
+	container-type: inline-size;
 }
 
 /* Paper tooth over everything: fibres and dust that the ink prints round. */
