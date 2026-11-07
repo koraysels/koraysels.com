@@ -1,16 +1,9 @@
 @import './lib/generated.css';
 
 @font-face {
-	font-family: 'macs Minecraft';
-	src: url('/fonts/macsMinecraft.woff2') format('woff2');
+	font-family: 'Satu Suro';
+	src: url('/fonts/SatuSuroDemoRegular.ttf') format('truetype');
 	font-weight: 400;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'macs Minecraft';
-	src: url('/fonts/macsMinecraft-Bold.woff2') format('woff2');
-	font-weight: 700;
 	font-display: swap;
 }
 
@@ -117,7 +110,9 @@ summary {
 }
 
 h1 {
-	font-family: 'macs Minecraft', 'Pixel Operator', monospace;
+	font-family: 'Satu Suro', 'Pixel Operator', monospace;
+	/* Satu Suro is an outline face, not a bitmap: it still wants smoothing. */
+	-webkit-font-smoothing: antialiased;
 	font-weight: 400;
 	letter-spacing: 0;
 }
