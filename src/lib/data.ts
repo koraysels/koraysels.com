@@ -16,7 +16,7 @@ export const profile = {
 /** Earlier work. Names only. A href makes it a link. */
 export const work: { name: string; href?: string }[] = [
 	{ name: 'Coming Soon Radio', href: 'https://github.com/onder-stroom' },
-	{ name: 'Onder Stroom' },
+	{ name: 'Onder Stroom', href: 'https://onder-stroom.be' },
 	{ name: 'Radio Slechtvalk', href: 'https://radioslechtvalk.be' },
 	{ name: 'Het Entrepot', href: 'https://hetentrepot.be' },
 	{ name: 'De Veerman' },
