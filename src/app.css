@@ -20,9 +20,9 @@
 }
 
 :root {
-	/* Two spot inks on uncoated paper. Blue carries every word; pink is the
-	   second pass. Where they cross they multiply into a purple of their own. */
-	--paper: #f2ede1;
+	/* Two spot inks on plain white stock. Blue carries every word; pink is
+	   the second pass. Where they cross they multiply into a purple of their own. */
+	--paper: #ffffff;
 	--blue: #3255a4;
 	--pink: #ff48b0;
 	--ink: var(--blue);
@@ -97,8 +97,8 @@ body::after {
 	pointer-events: none;
 	z-index: 100;
 	mix-blend-mode: multiply;
-	opacity: 0.32;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.42 0 0 0 0 0.36 0 0 0 1.1 -0.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	opacity: 0.22;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.4 0 0 0 0 0.4 0 0 0 1.1 -0.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 a,

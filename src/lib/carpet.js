@@ -4,9 +4,11 @@
  *
  * Rules:
  *   - a 14 x 10 grid of cells on a tile that repeats without a seam
- *   - each cell holds one primitive or nothing: zigzag, ring, disc, triangle,
- *     squiggle, dot grid, cross, half-disc, diamond, bar
- *   - rotations snap to 15 degrees; strokes are one weight, cut square
+ *   - each cell holds one primitive or nothing. Zigzag and dot grid are
+ *     always in; the rest come from plotter and print-shop graphics:
+ *     hatching, registration marks, rules, staircases, nested arcs,
+ *     wireframe grids, barcodes, slashes
+ *   - rotations snap to 45 degrees; strokes come in two weights, cut square
  *   - printed as two passes, one per ink, so the pink pass carries a
  *     halftone ground and the odd shape lands in both inks to overprint
  *
@@ -19,7 +21,8 @@ const COLS = 14;
 const ROWS = 10;
 const TW = CELL * COLS; // tile width, wider than most screens see at once
 const TH = CELL * ROWS;
-const W = 7; // stroke weight
+const W = 7; // heavy stroke
+const T = 2.5; // hairline, for the technical marks
 
 /** @param {number} seed */
 function rng(seed) {
@@ -44,24 +47,61 @@ const pts = (/** @type {number[]} */ xs) => {
 const MOTIFS = {
 	zig: (/** @type {number} */ h) =>
 		`<polyline fill="none" stroke-width="${W}" points="${pts([-h, -h / 3, -h / 2, h / 3, 0, -h / 3, h / 2, h / 3, h, -h / 3])}"/>`,
-	ring: (/** @type {number} */ h) =>
-		`<circle r="${h * 0.62}" fill="none" stroke-width="${W}"/>`,
-	disc: (/** @type {number} */ h) => `<circle r="${h * 0.42}"/>`,
-	tri: (/** @type {number} */ h) =>
-		`<polygon points="${pts([0, -h, h * 0.87, h * 0.5, -h * 0.87, h * 0.5])}"/>`,
-	squig: (/** @type {number} */ h) =>
-		`<path fill="none" stroke-width="${W}" d="M${-h},0q${h / 4},${-h * 0.7} ${h / 2},0t${h / 2},0t${h / 2},0t${h / 2},0"/>`,
 	dots: (/** @type {number} */ h) => {
 		const g = [-h * 0.6, 0, h * 0.6];
 		return g.flatMap((x) => g.map((y) => `<circle cx="${x}" cy="${y}" r="3.6"/>`)).join('');
 	},
-	cross: (/** @type {number} */ h) =>
-		`<path fill="none" stroke-width="${W}" d="M${-h * 0.8},0H${h * 0.8}M0,${-h * 0.8}V${h * 0.8}"/>`,
-	half: (/** @type {number} */ h) => `<path d="M${-h},${h * 0.3}A${h},${h} 0 0 1 ${h},${h * 0.3}Z"/>`,
-	diamond: (/** @type {number} */ h) =>
-		`<rect x="${-h * 0.5}" y="${-h * 0.5}" width="${h}" height="${h}" fill="none" stroke-width="${W}" transform="rotate(45)"/>`,
-	bar: (/** @type {number} */ h) =>
-		`<rect x="${-h}" y="${-W * 0.8}" width="${h * 2}" height="${W * 1.6}"/>`
+	// a square of diagonal hatching, as a plotter fills an area
+	hatch: (/** @type {number} */ h) => {
+		let d = '';
+		for (let c = -2 * h + h / 3; c < 2 * h; c += h / 3) {
+			const x1 = Math.max(-h, c - h);
+			const x2 = Math.min(h, c + h);
+			d += `M${x1.toFixed(1)},${(c - x1).toFixed(1)}L${x2.toFixed(1)},${(c - x2).toFixed(1)}`;
+		}
+		return `<path fill="none" stroke-width="${T}" d="${d}"/>`;
+	},
+	// the crosshair printers trim and register by
+	register: (/** @type {number} */ h) =>
+		`<circle r="${h * 0.5}" fill="none" stroke-width="${T}"/>` +
+		`<path fill="none" stroke-width="${T}" d="M${-h},0H${h}M0,${-h}V${h}"/>`,
+	rules: (/** @type {number} */ h) =>
+		[-0.6, -0.2, 0.2, 0.6]
+			.map((k) => `<rect x="${-h}" y="${(h * k - T / 2).toFixed(1)}" width="${h * 2}" height="${T}"/>`)
+			.join(''),
+	stairs: (/** @type {number} */ h) => {
+		const s = h / 2;
+		return `<polyline fill="none" stroke-width="${W}" points="${pts([-h, h, -h, h - s, -h + s, h - s, -h + s, 0, 0, 0, 0, -s, s, -s, s, -h, h, -h])}"/>`;
+	},
+	// quarter circles nested in a corner
+	arcs: (/** @type {number} */ h) =>
+		[0.5, 1.1, 1.7]
+			.map((k) => {
+				const r = h * k;
+				return `<path fill="none" stroke-width="${T}" d="M${(-h + r).toFixed(1)},${h}A${r.toFixed(1)},${r.toFixed(1)} 0 0 0 ${-h},${(h - r).toFixed(1)}"/>`;
+			})
+			.join(''),
+	// a 3 x 3 wireframe grid
+	wire: (/** @type {number} */ h) => {
+		const g = [-h, -h / 3, h / 3, h];
+		const d = g.map((k) => `M${k.toFixed(1)},${-h}V${h}M${-h},${k.toFixed(1)}H${h}`).join('');
+		return `<path fill="none" stroke-width="${T}" d="${d}"/>`;
+	},
+	barcode: (/** @type {number} */ h) => {
+		const bars = [2, 6, 2, 3, 8, 2, 4, 2];
+		const total = bars.reduce((a, b) => a + b * 1.6, 0);
+		let x = -total / 2;
+		let out = '';
+		bars.forEach((w, i) => {
+			if (i % 2 === 0) out += `<rect x="${x.toFixed(1)}" y="${-h * 0.7}" width="${w}" height="${h * 1.4}"/>`;
+			x += w * 1.6;
+		});
+		return out;
+	},
+	slashes: (/** @type {number} */ h) =>
+		[-0.6, -0.2, 0.2, 0.6]
+			.map((k) => `<path fill="none" stroke-width="${W * 0.7}" d="M${(h * k - h * 0.25).toFixed(1)},${h * 0.5}L${(h * k + h * 0.25).toFixed(1)},${-h * 0.5}"/>`)
+			.join('')
 };
 
 const NAMES = /** @type {(keyof typeof MOTIFS)[]} */ (Object.keys(MOTIFS));
@@ -84,10 +124,15 @@ export function makeCarpet(seed, inks) {
 	const rand = rng(seed);
 	const pick = (/** @type {any[]} */ arr) => arr[Math.floor(rand() * arr.length)];
 
-	// A carpet repeats a handful of shapes, not all of them.
-	const palette = NAMES.slice()
-		.sort(() => rand() - 0.5)
-		.slice(0, 5 + Math.floor(rand() * 3));
+	// A carpet repeats a handful of shapes, not all of them. Zigzag and dot
+	// grid are always among them.
+	const palette = [
+		'zig',
+		'dots',
+		...NAMES.filter((n) => n !== 'zig' && n !== 'dots')
+			.sort(() => rand() - 0.5)
+			.slice(0, 3 + Math.floor(rand() * 3))
+	];
 
 	let blue = '';
 	// The pink pass carries a light halftone screen as its ground.
@@ -104,7 +149,7 @@ export function makeCarpet(seed, inks) {
 			const h = CELL * (0.3 + rand() * 0.14);
 			const x = col * CELL + CELL / 2 + (rand() - 0.5) * CELL * 0.25;
 			const y = row * CELL + CELL / 2 + (rand() - 0.5) * CELL * 0.25;
-			const turn = Math.floor(rand() * 24) * 15;
+			const turn = Math.floor(rand() * 8) * 45;
 
 			// Shapes near an edge are drawn again on the far side, so the tile
 			// repeats without a seam.
