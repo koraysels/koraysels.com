@@ -501,7 +501,8 @@
 	}
 
 	@media (max-width: 760px) {
-		.names {
+		.names,
+		.line {
 			font-size: var(--step-body);
 			line-height: 24px;
 		}
