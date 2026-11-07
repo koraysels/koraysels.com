@@ -51,7 +51,7 @@
 		const asked = new URLSearchParams(location.search).get('field') ?? '';
 		const only = FIELDS.includes(asked) ? asked : undefined;
 		let woven = 0;
-		const knot = () => (innerWidth < 700 ? 3 : 4);
+		const knot = () => (innerWidth < 700 ? 2 : 3);
 		const lay = () => {
 			const { width, height } = carpet.getBoundingClientRect();
 			if (Math.abs(width - woven) < 2) return;

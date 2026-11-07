@@ -229,8 +229,11 @@ export function weave(seed, cols, rows, only) {
 
 	// Scale play: the field is woven coarser than the borders, and its grain
 	// swells across the rug, so fine and heavy knots meet in one piece.
-	const grain = 2 + Math.floor(rand() * 2);
-	const swell = 1.2 + rand() * 2;
+	// Meander and fractal carry fine detail and want a fine grain; bars and
+	// checker are bold and want a coarse one that swings wide.
+	const fine = name === 'meander' || name === 'fractal';
+	const grain = fine ? 1 + Math.floor(rand() * 2) : 3 + Math.floor(rand() * 2);
+	const swell = fine ? 1 + rand() * 1.6 : 1.2 + rand() * 2;
 	const flip = rand() < 0.5;
 	const scaleAt = (/** @type {number} */ x) => {
 		const t = flip ? 1 - x / cols : x / cols;
