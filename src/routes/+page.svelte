@@ -84,18 +84,24 @@
 
 		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => watch.disconnect();
 
-		// Scrolling drifts the two passes apart and lifts the name. The page
-		// eases toward the scroll position rather than following it, and only
-		// over the first screen or so, where the carpet is.
-		const root = document.documentElement;
+		// Scrolling drifts the rug's pink pass and lifts the name's. Only the
+		// two moving layers get the value, so a frame restyles two elements,
+		// not the page. With a mouse the layers ease after the scroll; on touch
+		// they follow it, since momentum scrolling already eases and a second
+		// ease on top only lags.
+		const movers = [pinkInk, document.querySelector<HTMLElement>('.pass.pink')].filter(
+			(el): el is HTMLElement => !!el
+		);
+		const ease = matchMedia('(pointer: coarse)').matches ? 1 : 0.2;
 		let target = 0;
 		let current = 0;
 		let frame = 0;
 
 		const tick = () => {
-			current += (target - current) * 0.09;
-			if (Math.abs(target - current) < 0.05) current = target;
-			root.style.setProperty('--s', current.toFixed(2));
+			current += (target - current) * ease;
+			if (Math.abs(target - current) < 0.1) current = target;
+			const s = current.toFixed(1);
+			for (const el of movers) el.style.setProperty('--s', s);
 			frame = current === target ? 0 : requestAnimationFrame(tick);
 		};
 
@@ -151,15 +157,6 @@
 			>{/each}</span
 	>
 {/snippet}
-
-<!-- Ink that does not quite cover: the drum leaves specks of paper. -->
-<svg class="defs" width="0" height="0" aria-hidden="true">
-	<filter id="speckle" x="0" y="0" width="100%" height="100%">
-		<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" />
-		<feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 2.1" />
-		<feComposite in="SourceGraphic" operator="in" />
-	</filter>
-</svg>
 
 <div
 	class="page"
@@ -271,10 +268,6 @@
 </div>
 
 <style>
-	.defs {
-		position: absolute;
-	}
-
 	.page {
 		max-width: 1440px;
 		margin: 0 auto;
@@ -312,7 +305,8 @@
 		background-repeat: no-repeat;
 		image-rendering: pixelated;
 		mix-blend-mode: multiply;
-		filter: url(#speckle);
+		-webkit-mask: var(--speckle);
+		mask: var(--speckle);
 	}
 
 	/* the blue pass stays put; the pink one alone drifts a few pixels, so the
@@ -343,7 +337,8 @@
 	.pass {
 		grid-area: 1 / 1;
 		mix-blend-mode: multiply;
-		filter: url(#speckle);
+		-webkit-mask: var(--speckle);
+		mask: var(--speckle);
 	}
 
 	.pass.blue {

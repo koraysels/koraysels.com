@@ -29,6 +29,11 @@
 
 	--rule: 3px;
 
+	/* Ink that does not quite cover: specks of paper the drum leaves. A noise
+	   image used as a mask, drawn once and cached, so moving layers carry it
+	   without re-running a filter every frame. */
+	--speckle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -2.4 0 0 0 2.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23n%29'/%3E%3C/svg%3E") 0 0 / 240px 240px repeat;
+
 	/* Pixel Operator is a bitmap face drawn on a 16px body: at any size that is
 	   not a whole multiple of it the strokes fall between device pixels and go
 	   thin, so its steps are fixed. */
