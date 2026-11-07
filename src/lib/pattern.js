@@ -203,7 +203,8 @@ export function makeEdge(seed) {
 			out.push([at, depth * ROW]);
 			at += w;
 			out.push([at, depth * ROW]);
-			depth = depth === 1 ? pick([0, 0, 2]) : 1;
+			// One cell at a time, never two: the edge is nibbled, not castellated.
+			depth = Math.min(2, Math.max(0, depth + pick([-1, 0, 0, 1])));
 		}
 		return out;
 	};

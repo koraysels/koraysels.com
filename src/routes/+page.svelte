@@ -19,7 +19,8 @@
 	// Key is the letter's index in the name, value is the gap after it.
 	const kern: Record<number, string> = {
 		0: '-0.06em', // K | o
-		1: '0.05em' // o | r
+		1: '0.05em', // o | r
+		6: '0.05em' // S | e
 	};
 </script>
 
