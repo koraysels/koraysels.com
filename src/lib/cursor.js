@@ -67,14 +67,17 @@ function inside(/** @type {string[]} */ rows) {
 }
 
 /**
+ * The bitmap as an SVG in the two passes, CELL px per bitmap pixel.
  * @param {string[]} rows
- * @param {[number, number]} hotspot in bitmap pixels
  * @param {{ blue: string, pink: string, paper: string }} inks
+ * @param {number} [size] square canvas side, in bitmap pixels; centres the bitmap
  */
-function cursor(rows, hotspot, inks) {
+function print(rows, inks, size) {
 	const fill = inside(rows);
 	const h = rows.length;
 	const w = rows[0].length;
+	const ox = size ? Math.floor((size - w - 1) / 2) : 0;
+	const oy = size ? Math.floor((size - h - 1) / 2) : 0;
 	let pink = '';
 	let paper = '';
 	let blue = '';
@@ -84,7 +87,7 @@ function cursor(rows, hotspot, inks) {
 			const within = fill(x, y);
 			if (!edge && !within) continue;
 			const r = (/** @type {number} */ dx) =>
-				`<rect x="${(x + dx) * CELL}" y="${(y + dx) * CELL}" width="${CELL}" height="${CELL}"/>`;
+				`<rect x="${(x + ox + dx) * CELL}" y="${(y + oy + dx) * CELL}" width="${CELL}" height="${CELL}"/>`;
 			// the pink pass, solid, one pixel off
 			pink += r(1);
 			// paper under the inside, so it reads on any ground
@@ -93,12 +96,29 @@ function cursor(rows, hotspot, inks) {
 			if (edge || (x + y) % 2 === 0) blue += r(0);
 		}
 	}
-	const W = (w + 1) * CELL;
-	const H = (h + 1) * CELL;
-	const svg =
+	const W = (size ?? w + 1) * CELL;
+	const H = (size ?? h + 1) * CELL;
+	return (
 		`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges">` +
-		`<g fill="${inks.pink}">${pink}</g><g fill="${inks.paper}">${paper}</g><g fill="${inks.blue}">${blue}</g></svg>`;
-	return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${hotspot[0] * CELL} ${hotspot[1] * CELL}`;
+		`<g fill="${inks.pink}">${pink}</g><g fill="${inks.paper}">${paper}</g><g fill="${inks.blue}">${blue}</g></svg>`
+	);
+}
+
+/**
+ * @param {string[]} rows
+ * @param {[number, number]} hotspot in bitmap pixels
+ * @param {{ blue: string, pink: string, paper: string }} inks
+ */
+function cursor(rows, hotspot, inks) {
+	return `url("data:image/svg+xml,${encodeURIComponent(print(rows, inks))}") ${hotspot[0] * CELL} ${hotspot[1] * CELL}`;
+}
+
+/**
+ * The favicon: the hand, which is to say cursor: pointer.
+ * @param {{ blue: string, pink: string, paper: string }} inks
+ */
+export function favicon(inks) {
+	return print(HAND, inks, 18);
 }
 
 /** @param {{ blue: string, pink: string, paper: string }} inks */
