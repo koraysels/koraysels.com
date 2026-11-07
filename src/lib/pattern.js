@@ -210,9 +210,10 @@ export function makeEdge(seed) {
 		};
 		while (at < limit) {
 			// Long runs between the steps: a few wide teeth, not a comb.
-			run(pick(cells) * pick([2, 3, 3, 4, 5, 7]), depth);
-			// One cell at a time, never two: the edge is nibbled, not castellated.
-			depth = Math.min(2, Math.max(0, depth + pick([-1, 0, 0, 1])));
+			run(pick(cells) * pick([4, 5, 6, 8, 10]), depth);
+			// One cell either side of the baseline, and most steps go back to it,
+			// so the edge stays a quiet line with the odd notch in it.
+			depth = depth === 1 ? pick([0, 1, 1, 2]) : 1;
 		}
 		out.push([at, ROW]);
 		return out;
@@ -272,7 +273,7 @@ export function makeCrumbs(seed, ink = '#0b1412') {
 	};
 	const pick = (/** @type {any[]} */ arr) => arr[Math.floor(rand() * arr.length)];
 
-	const REACH = 3; // cells: how far from the edge a crumb can land
+	const REACH = 2; // cells: how far from the edge a crumb can land
 	const rects = [];
 	for (let y = 0; y < CRUMB_H; y += ROW) {
 		let x = 0;
@@ -280,7 +281,7 @@ export function makeCrumbs(seed, ink = '#0b1412') {
 			const w = pick(COLW);
 			// Only along the two edges of the corner, thinning out as they go in.
 			const cells = Math.min(x / ROW, y / ROW);
-			if (cells < REACH && rand() < 0.3 * (1 - cells / REACH)) {
+			if (cells < REACH && rand() < 0.22 * (1 - cells / REACH)) {
 				rects.push(`<rect x="${x}" y="${y}" width="${w}" height="${ROW}"/>`);
 			}
 			x += w;
