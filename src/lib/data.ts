@@ -19,7 +19,7 @@ export const work: { name: string; href?: string }[] = [
 	{ name: 'Onder Stroom', href: 'https://onder-stroom.be' },
 	{ name: 'Radio Slechtvalk', href: 'https://radioslechtvalk.be' },
 	{ name: 'Het Entrepot', href: 'https://hetentrepot.be' },
-	{ name: 'De Veerman' },
+	{ name: 'De Veerman', href: 'https://www.veerman.be' },
 	{ name: 'KVS', href: 'https://www.kvs.be' },
 	{ name: 'Kavka', href: 'https://kavka.be' },
 	{ name: 'Arenberg Spotlight', href: 'https://arenberg.be' },
