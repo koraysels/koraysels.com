@@ -8,16 +8,10 @@
 
 	// The prerendered page prints this carpet; every visit then prints its own.
 	let seed = $state(19960612);
-	let live = $state(false);
 	const carpet = $derived(makeCarpet(seed, inks));
 
-	function reprint() {
-		seed = (Math.random() * 2 ** 32) >>> 0;
-	}
-
 	onMount(() => {
-		reprint();
-		live = true;
+		seed = (Math.random() * 2 ** 32) >>> 0;
 	});
 
 	// Satu Suro has no alternates: its lowercase is a copy of its caps, so the two
@@ -82,9 +76,6 @@
 			<div class="ink blue"></div>
 			<div class="ink pink"></div>
 		</div>
-		{#if live}
-			<button class="reprint" type="button" onclick={reprint}>Reprint</button>
-		{/if}
 		<h1 aria-label={profile.name}>{@render pass('blue')}{@render pass('pink')}</h1>
 		<p class="line">{profile.line}</p>
 	</section>
@@ -233,20 +224,6 @@
 		transform: translate(var(--mx), var(--my)) rotate(var(--mr));
 	}
 
-	.reprint {
-		position: absolute;
-		top: calc(var(--gutter) + 16px);
-		right: 0;
-		font: inherit;
-		color: var(--ink);
-		background: var(--paper);
-		border: var(--rule) solid var(--ink);
-		padding: 4px 12px;
-	}
-
-	.reprint:hover {
-		background: var(--pink);
-	}
 
 	h1 {
 		display: grid;
