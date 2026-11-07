@@ -26,7 +26,7 @@
 	--surface: #0d3b30;
 	--field: #bdbdbd;
 	--ink: #11221d;
-	--muted: #5d6f68;
+	--muted: #45554e;
 	--accent: #e5005c;
 	--accent-ink: #ffffff;
 	--ink-display: #ccff00;
@@ -38,9 +38,12 @@
 	--title-stroke: 0.085em;
 	--edge: calc(var(--title) * 0.0425);
 
-	--step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
-	--step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
-	--step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+	/* Pixel Operator is a bitmap face drawn on a 16px body: at any size that is
+	   not a whole multiple of it the strokes fall between device pixels and go
+	   thin, so the small steps are fixed, not fluid. */
+	--step-small: 16px;
+	--step-body: 16px;
+	--step-lead: 32px;
 	--step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
 	--step-display: clamp(2.5rem, 1.2rem + 4.4vw, 4.5rem);
 
@@ -96,7 +99,7 @@ body {
 	font-family: 'Pixel Operator', 'Courier New', monospace;
 	font-size: var(--step-body);
 	line-height: 1.5;
-	font-weight: 400;
+	font-weight: 700;
 	-webkit-font-smoothing: none;
 	overflow-x: hidden;
 	cursor: default;
