@@ -84,14 +84,11 @@
 
 		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => watch.disconnect();
 
-		// Scrolling drifts the rug's pink pass and lifts the name's. Only the
-		// two moving layers get the value, so a frame restyles two elements,
-		// not the page. With a mouse the layers ease after the scroll; on touch
+		// Scrolling drifts the rug's pink pass. Only that layer gets the
+		// value, so a frame restyles one element, not the page. With a mouse the layers ease after the scroll; on touch
 		// they follow it, since momentum scrolling already eases and a second
 		// ease on top only lags.
-		const movers = [pinkInk, document.querySelector<HTMLElement>('.pass.pink')].filter(
-			(el): el is HTMLElement => !!el
-		);
+		const movers = [pinkInk].filter((el): el is HTMLElement => !!el);
 		const ease = matchMedia('(pointer: coarse)').matches ? 1 : 0.2;
 		let target = 0;
 		let current = 0;
@@ -145,6 +142,16 @@
 <svelte:head>
 	<title>Koray Sels, cursor: pointer;</title>
 	<meta name="description" content="{profile.name}. {profile.line} {profile.city}." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://www.koraysels.com/" />
+	<meta property="og:title" content={profile.name} />
+	<meta property="og:description" content={profile.line} />
+	<meta property="og:image" content="https://www.koraysels.com/og.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="{profile.name}, under a two-ink woven carpet pattern" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content="https://www.koraysels.com/og.png" />
 </svelte:head>
 
 {#snippet pass(ink: string)}
@@ -172,7 +179,7 @@
 			<div class="ink blue" bind:this={blueInk}></div>
 			<div class="ink pink" bind:this={pinkInk}></div>
 		</div>
-		<h1 aria-label={profile.name}>{@render pass('blue')}{@render pass('pink')}</h1>
+		<h1 aria-label={profile.name}>{@render pass('blue')}</h1>
 		<p class="line">{profile.line}</p>
 		<p class="role">{profile.role}</p>
 	</section>
@@ -328,12 +335,12 @@
 		font-size: clamp(52px, 10.5vw, 152px);
 		line-height: 1;
 		letter-spacing: -0.09em;
-		/* only the cap line crosses the carpet: enough to overprint, not to drown */
-		margin-top: -0.2em;
+		/* clear of the carpet, on the next baseline */
+		margin-top: var(--space-3);
 		position: relative;
 	}
 
-	/* the name, in two passes that never quite line up */
+	/* the name, one blue pass */
 	.pass {
 		grid-area: 1 / 1;
 		mix-blend-mode: multiply;
@@ -343,18 +350,6 @@
 
 	.pass.blue {
 		color: var(--blue);
-	}
-
-	.pass.pink {
-		color: var(--pink);
-		/* the blue pass stays put; the pink pass alone lifts off on scroll */
-		will-change: transform;
-		/* a fixed offset, the same on every visit; only the rug's varies */
-		transform: translate(
-				calc(6.6px + var(--s, 0) * 0.01px),
-				calc(-4.4px - var(--s, 0) * 0.12px)
-			)
-			rotate(0.12deg);
 	}
 
 	.letter {

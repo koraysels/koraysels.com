@@ -69,7 +69,7 @@ function inside(/** @type {string[]} */ rows) {
 /**
  * The bitmap as an SVG in the two passes, CELL px per bitmap pixel.
  * @param {string[]} rows
- * @param {{ blue: string, pink: string, paper: string }} inks
+ * @param {{ blue: string, pink: string, paper?: string }} inks
  * @param {number} [size] square canvas side, in bitmap pixels; centres the bitmap
  */
 function print(rows, inks, size) {
@@ -88,10 +88,12 @@ function print(rows, inks, size) {
 			if (!edge && !within) continue;
 			const r = (/** @type {number} */ dx) =>
 				`<rect x="${(x + ox + dx) * CELL}" y="${(y + oy + dx) * CELL}" width="${CELL}" height="${CELL}"/>`;
-			// the pink pass, solid, one pixel off
-			pink += r(1);
-			// paper under the inside, so it reads on any ground
-			if (within) paper += r(0);
+			// the pink pass, one pixel off: solid on the favicon, outline only on
+			// the cursors
+			if (edge || inks.paper) pink += r(1);
+			// paper under the inside, for the favicon; the cursors leave it out
+			// so the page shows through between the dots
+			if (within && inks.paper) paper += r(0);
 			// the blue pass: solid outline, dotted inside
 			if (edge || (x + y) % 2 === 0) blue += r(0);
 		}
@@ -107,7 +109,7 @@ function print(rows, inks, size) {
 /**
  * @param {string[]} rows
  * @param {[number, number]} hotspot in bitmap pixels
- * @param {{ blue: string, pink: string, paper: string }} inks
+ * @param {{ blue: string, pink: string, paper?: string }} inks
  */
 function cursor(rows, hotspot, inks) {
 	return `url("data:image/svg+xml,${encodeURIComponent(print(rows, inks))}") ${hotspot[0] * CELL} ${hotspot[1] * CELL}`;
@@ -124,7 +126,7 @@ export function favicon(inks) {
 /** @param {{ blue: string, pink: string, paper: string }} inks */
 export function cursors(inks) {
 	return {
-		arrow: cursor(ARROW, [0, 0], inks),
-		hand: cursor(HAND, [5, 0], inks)
+		arrow: cursor(ARROW, [0, 0], { blue: inks.blue, pink: inks.pink }),
+		hand: cursor(HAND, [5, 0], { blue: inks.blue, pink: inks.pink })
 	};
 }
