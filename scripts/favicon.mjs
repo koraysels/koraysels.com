@@ -1,5 +1,5 @@
 /**
- * Writes static/favicon.svg: the pixel hand from src/lib/cursor.js.
+ * Writes static/icon.svg: the pixel hand from src/lib/cursor.js.
  *
  *   node scripts/favicon.mjs
  */
@@ -10,6 +10,6 @@ import { fileURLToPath } from 'node:url';
 import { favicon } from '../src/lib/cursor.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const out = resolve(here, '../static/favicon.svg');
+const out = resolve(here, '../static/icon.svg');
 writeFileSync(out, favicon({ blue: '#3255a4', pink: '#ff48b0', paper: '#ffffff' }) + '\n');
 console.log(out);
