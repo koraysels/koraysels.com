@@ -2,7 +2,8 @@
  * The mouse pointer, printed like the rest of the page: a pixel bitmap in two
  * passes, pink set a knot off the blue, with its inside in a dotted dither.
  *
- * Bitmaps: X is outline. The inside is whatever the outside cannot reach.
+ * Bitmaps: X is outline. The inside is whatever the outside cannot reach,
+ * or, in a traced glyph, the cells marked o.
  */
 
 const ARROW = [
@@ -47,6 +48,238 @@ const HAND = [
 	'.....XXXXXXXXX...'
 ];
 
+/*
+ * "Koray Sels" typed in Wingdings, traced from the system font one glyph at a
+ * time: X is outline, o is the glyph's solid inside, . is paper. Shown in
+ * order while the mouse rests, each with its hotspot in the middle.
+ */
+const IDLE = /** @type {[string[], [number, number]][]} */ ([
+	[
+		// K: neutral face
+		[
+			'....................',
+			'.......XXXXXX.......',
+			'.....XXXXXXXXXX.....',
+			'....XX........XXX...',
+			'...XX..........XX...',
+			'..XX............XX..',
+			'..X...XXX...XX...XX.',
+			'.XX...XoX..XooX..XX.',
+			'.XX...XX....XX....X.',
+			'.X................X.',
+			'.X................X.',
+			'.XX...............X.',
+			'.XX..XXXXXXXXXX..XX.',
+			'.XX..............XX.',
+			'..XX............XX..',
+			'...XX...........XX..',
+			'...XXX........XXX...',
+			'.....XXX....XXXX....',
+			'......XXXXXXXX......',
+			'....................'
+		],
+		[10, 10]
+	],
+	[
+		// o: hollow square
+		[
+			'....................',
+			'.XXXXXXXXXXXXXXXXX..',
+			'.XooooooooooooooooX.',
+			'.XooXXXXXXXXXXXXooX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XoX............XoX.',
+			'.XooXXXXXXXXXXXXooX.',
+			'.XooooooooooooooooX.',
+			'.XXXXXXXXXXXXXXXXXX.',
+			'....................'
+		],
+		[10, 10]
+	],
+	[
+		// r: shadowed square
+		[
+			'....................',
+			'...XXXXXXXXXXXXXXX..',
+			'..XoooooooooooooooX.',
+			'.XooooooooooooooooX.',
+			'.XoXXXXXXXXXXXXoooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XooX.',
+			'.XX............XoX..',
+			'.XXXXXXXXXXXXXXXX...',
+			'....................'
+		],
+		[10, 10]
+	],
+	[
+		// a: cancer
+		[
+			'........................',
+			'............XXX.........',
+			'.......XXXXXXooXXXXX....',
+			'....XXXoXXXX.XXXXXXoXXX.',
+			'...XXXXX...........XXXX.',
+			'..XX...XX.............X.',
+			'.XX.....XX..............',
+			'.XX.....XX..............',
+			'.X......XX......XXXXX...',
+			'.XX.....XX.....XX...XX..',
+			'.XoX...XX.....XX.....XX.',
+			'..XXXXXXX.....XX......X.',
+			'....XXX.......XX......X.',
+			'..............XX.....XX.',
+			'...............XX....XX.',
+			'.XXX............XXXXXX..',
+			'.XXoXXXX.......XoooXX...',
+			'...XXXooXXXXXXXoXXX.....',
+			'......XXXXXXXXXX........',
+			'........................'
+		],
+		[12, 10]
+	],
+	[
+		// y: boxed star
+		[
+			'........................',
+			'.XXXXXXXXXXXXXXXXXXXXXX.',
+			'.XooXXXXXXXXXXXXXXXXooX.',
+			'.XoX................XoX.',
+			'.XX..................XX.',
+			'.XX........XX........XX.',
+			'.XX.......XooX.......XX.',
+			'.XX......XoXXoX......XX.',
+			'.XX.....XoX..XoX.....XX.',
+			'.XX....XoX....XoX....XX.',
+			'.XX...XoX......XoX...XX.',
+			'.XX..XoX........XoX..XX.',
+			'.XX.XoX..........XoX.XX.',
+			'.XX..X............X..XX.',
+			'.XX..................XX.',
+			'.XX..................XX.',
+			'.XX..................XX.',
+			'.XoXXXXXXXXXXXXXXXXXXoX.',
+			'.XXXXXXXXXXXXXXXXXXXXXX.',
+			'........................'
+		],
+		[12, 10]
+	],
+	[
+		// S: droplet
+		[
+			'..............',
+			'.......X......',
+			'......XX......',
+			'......XX......',
+			'.....XooX.....',
+			'.....XooX.....',
+			'....XooooX....',
+			'...XooooooX...',
+			'..XooooooooX..',
+			'..XooooooooX..',
+			'.XooooooooooX.',
+			'.XooooooooooX.',
+			'.XooooooooooX.',
+			'.XooooooooooX.',
+			'..XoooooooooX.',
+			'..XooooooooX..',
+			'...XXoooooX...',
+			'.....XXXXX....',
+			'..............'
+		],
+		[7, 9]
+	],
+	[
+		// e: virgo
+		[
+			'......................',
+			'.XX...XX...XX.........',
+			'.XX..XooX.XooX........',
+			'..XX.XXoX.XXoX........',
+			'..XoXX.XoXX.XX........',
+			'..XoX..XoX..XoX.......',
+			'..XoX..XoX..XoX.......',
+			'..XX...XoX..XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX...XoX.......',
+			'..XX...XX....XX.......',
+			'..XX...XX....XX.......',
+			'.............XX...XX..',
+			'.............XoXXXooX.',
+			'..............XXXXooX.',
+			'..................XX..',
+			'......................'
+		],
+		[11, 12]
+	],
+	[
+		// l: circle
+		[
+			'................',
+			'......XXXX......',
+			'....XXooooXX....',
+			'...XooooooooX...',
+			'..XooooooooooX..',
+			'.XooooooooooooX.',
+			'.XooooooooooooX.',
+			'.XooooooooooooX.',
+			'.XooooooooooooX.',
+			'.XooooooooooooX.',
+			'.XooooooooooooX.',
+			'..XooooooooooX..',
+			'..XooooooooooX..',
+			'...XXooooooXX...',
+			'.....XXXXXX.....',
+			'................'
+		],
+		[8, 8]
+	],
+	[
+		// s: diamond
+		[
+			'........',
+			'...XX...',
+			'..XooX..',
+			'.XooooX.',
+			'.XooooX.',
+			'.XooooX.',
+			'.XooooX.',
+			'..XooX..',
+			'...XX...',
+			'...XX...',
+			'........'
+		],
+		[4, 5]
+	]
+]);
+
 const CELL = 2; // px per bitmap pixel
 
 /** Cells inside the outline: not outline, and not reachable from outside. */
@@ -73,7 +306,11 @@ function inside(/** @type {string[]} */ rows) {
  * @param {number} [size] square canvas side, in bitmap pixels; centres the bitmap
  */
 function print(rows, inks, size) {
-	const fill = inside(rows);
+	// a traced glyph marks its own inside; a drawn bitmap is filled where the
+	// outside cannot reach
+	const fill = rows.some((row) => row.includes('o'))
+		? (/** @type {number} */ x, /** @type {number} */ y) => rows[y][x] === 'o'
+		: inside(rows);
 	const h = rows.length;
 	const w = rows[0].length;
 	const ox = size ? Math.floor((size - w - 1) / 2) : 0;
@@ -129,4 +366,12 @@ export function cursors(inks) {
 		arrow: cursor(ARROW, [0, 0], { blue: inks.blue, pink: inks.pink }),
 		hand: cursor(HAND, [5, 0], { blue: inks.blue, pink: inks.pink })
 	};
+}
+
+/**
+ * The idle set, in spelling order, as cursor values in the same two passes as the arrow.
+ * @param {{ blue: string, pink: string }} inks
+ */
+export function idles(inks) {
+	return IDLE.map(([rows, hotspot]) => cursor(rows, hotspot, { blue: inks.blue, pink: inks.pink }));
 }

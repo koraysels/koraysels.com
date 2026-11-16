@@ -116,27 +116,6 @@
 			cancelAnimationFrame(frame);
 		};
 	});
-
-	// Satu Suro has no alternates: its lowercase is a copy of its caps, so the two
-	// S's in the name come out identical. Nudge every letter a little instead.
-	function wobble(char: string, i: number) {
-		const seed = char.charCodeAt(0) * 31 + i * 17;
-		const pick = (n: number, span: number) => (((seed * (n + 3)) % 997) / 997) * span - span / 2;
-		const rotate = pick(1, 11).toFixed(2);
-		const shift = pick(2, 9).toFixed(2);
-		const scale = (1 + pick(3, 0.16)).toFixed(3);
-		return `rotate(${rotate}deg) translateY(${shift}px) scale(${scale})`;
-	}
-
-	const letters = profile.name.split('');
-
-	// Per-pair kerning, since inline-block spans ignore the font's own pairs.
-	// Key is the letter's index in the name, value is the gap after it.
-	const kern: Record<number, string> = {
-		0: '-0.06em', // K | o
-		1: '0.05em', // o | r
-		6: '0.05em' // S | e
-	};
 </script>
 
 <svelte:head>
@@ -155,14 +134,7 @@
 </svelte:head>
 
 {#snippet pass(ink: string)}
-	<span class="pass {ink}" aria-hidden="true"
-		>{#each letters as char, i (i)}<span
-				class="letter"
-				class:space={char === ' '}
-				style="transform: {wobble(char, i)}; margin-right: {kern[i] ?? '0'}"
-				>{char === ' ' ? ' ' : char}</span
-			>{/each}</span
-	>
+	<span class="pass {ink}" aria-hidden="true">{profile.name}</span>
 {/snippet}
 
 <div
@@ -329,12 +301,12 @@
 
 	h1 {
 		display: grid;
-		font-family: 'Satu Suro', 'Pixel Operator', monospace;
+		font-family: 'PP Mori', 'Pixel Operator', sans-serif;
 		-webkit-font-smoothing: antialiased;
-		font-weight: 400;
+		font-weight: 800;
 		font-size: clamp(52px, 10.5vw, 152px);
 		line-height: 1;
-		letter-spacing: -0.09em;
+		letter-spacing: -0.04em;
 		/* clear of the carpet, on the next baseline */
 		margin-top: var(--space-3);
 		position: relative;
@@ -350,15 +322,6 @@
 
 	.pass.blue {
 		color: var(--blue);
-	}
-
-	.letter {
-		display: inline-block;
-		transform-origin: 50% 75%;
-	}
-
-	.letter.space {
-		width: 0.26em;
 	}
 
 	.line {

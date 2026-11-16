@@ -1,7 +1,7 @@
 @font-face {
-	font-family: 'Satu Suro';
-	src: url('/fonts/SatuSuroDemoRegular.ttf') format('truetype');
-	font-weight: 400;
+	font-family: 'PP Mori';
+	src: url('/fonts/PPMori-ExtraBold.woff') format('woff');
+	font-weight: 800;
 	font-display: swap;
 }
 
@@ -112,6 +112,12 @@ summary {
 input,
 textarea {
 	cursor: text;
+}
+
+/* set from the layout while the mouse rests */
+:root[data-idle],
+:root[data-idle] * {
+	cursor: var(--cursor-idle), default !important;
 }
 
 h1,
