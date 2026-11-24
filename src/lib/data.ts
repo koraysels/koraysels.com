@@ -2,7 +2,7 @@ export const profile = {
 	name: 'Koray Sels',
 	company: 'cursor: pointer;',
 	line: 'Websites, apps, electronics, live streaming infrastructure and (art-)installations.',
-	role: 'Researcher at KdG University of Applied Sciences and Arts, Antwerp.',
+	role: 'Creative developer. Researcher at KdG University of Applied Sciences and Arts, Antwerp.',
 	city: 'Antwerp, Belgium',
 	vat: 'BE 0502.806.428',
 	email: 'me@koraysels.com',
