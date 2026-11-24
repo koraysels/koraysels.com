@@ -20,8 +20,10 @@
 }
 
 :root {
-	/* Two spot inks on plain white stock. Blue carries every word; pink is
-	   the second pass. Where they cross they multiply into a purple of their own. */
+	/* Two spot inks on plain white stock. The first (--blue) carries every
+	   word; the second (--pink) is the overprint. Where they cross they
+	   multiply into a colour of their own. Each set in lib/theme.js fills
+	   both; the layout prints them per theme. */
 	--paper: #ffffff;
 	--blue: #3255a4;
 	--pink: #ff48b0;

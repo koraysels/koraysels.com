@@ -3,11 +3,7 @@
 	import { profile, work } from '#lib/data';
 	import { pile } from '#lib/pile';
 	import { FIELDS, weave } from '#lib/rug.js';
-
-	const inks = {
-		blue: [0x32, 0x55, 0xa4],
-		pink: [0xff, 0x48, 0xb0]
-	};
+	import { THEMES, ORDER, current as inkSet, setTheme, rgb } from '#lib/theme.js';
 
 	// The few pixels the rug's pink pass lands off the blue one. Prerendered
 	// with one value; every visit then gets its own. The name's is fixed.
@@ -63,6 +59,15 @@
 			localStorage.setItem('rug-field', only);
 		} catch {}
 		let woven = 0;
+		/** @type {{ codes: Uint8Array, cols: number, rows: number } | null} */
+		let rug: { codes: Uint8Array; cols: number; rows: number } | null = null;
+		// print both passes in the current ink set; again whenever it changes
+		const paint = () => {
+			if (!rug) return;
+			const inks = THEMES[inkSet()];
+			blueInk.style.backgroundImage = inkImage(rug.codes, rug.cols, rug.rows, 1, rgb(inks.blue));
+			pinkInk.style.backgroundImage = inkImage(rug.codes, rug.cols, rug.rows, 2, rgb(inks.pink));
+		};
 		const knot = () => (innerWidth < 700 ? 2 : 3);
 		const lay = () => {
 			const { width, height } = carpet.getBoundingClientRect();
@@ -70,10 +75,10 @@
 			woven = width;
 			const cols = Math.ceil(width / knot());
 			const rows = Math.ceil(height / knot());
-			const rug = weave(seed, cols, rows, only);
-			field = rug.field;
-			blueInk.style.backgroundImage = inkImage(rug.codes, cols, rows, 1, inks.blue);
-			pinkInk.style.backgroundImage = inkImage(rug.codes, cols, rows, 2, inks.pink);
+			const cloth = weave(seed, cols, rows, only);
+			field = cloth.field;
+			rug = { codes: cloth.codes, cols, rows };
+			paint();
 		};
 		let resize = 0;
 		const watch = new ResizeObserver(() => {
@@ -81,8 +86,13 @@
 			resize = window.setTimeout(lay, woven ? 150 : 0);
 		});
 		watch.observe(carpet);
+		addEventListener('themechange', paint);
+		const stop = () => {
+			watch.disconnect();
+			removeEventListener('themechange', paint);
+		};
 
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => watch.disconnect();
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return stop;
 
 		// Scrolling drifts the rug's pink pass. Only that layer gets the
 		// value, so a frame restyles one element, not the page. With a mouse the layers ease after the scroll; on touch
@@ -111,7 +121,7 @@
 		onScroll();
 
 		return () => {
-			watch.disconnect();
+			stop();
 			removeEventListener('scroll', onScroll);
 			cancelAnimationFrame(frame);
 		};
@@ -143,6 +153,13 @@
 >
 	<header class="top">
 		<p>{profile.company}</p>
+		<button
+			class="inks"
+			type="button"
+			aria-label="Change colours"
+			onclick={() => setTheme(ORDER[(ORDER.indexOf(inkSet()) + 1) % ORDER.length])}
+			><span></span><span></span></button
+		>
 		<p><a href="mailto:{profile.email}">{profile.email}</a></p>
 	</header>
 
@@ -256,8 +273,44 @@
 	.top {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		gap: var(--space-2);
 		padding: var(--space-1) 0;
+	}
+
+	/* the colour switch: the two inks, overprinted a knot off */
+	.inks {
+		position: relative;
+		width: 24px;
+		height: 24px;
+		margin-left: auto;
+		padding: 0;
+		border: 0;
+		background: none;
+	}
+
+	.inks span {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		mix-blend-mode: multiply;
+	}
+
+	.inks span:first-child {
+		top: 3px;
+		left: 3px;
+		background: var(--blue);
+	}
+
+	.inks span:last-child {
+		top: 7px;
+		left: 7px;
+		background: var(--pink);
+	}
+
+	.inks:hover span:last-child {
+		top: 5px;
+		left: 5px;
 	}
 
 	/* hero: the carpet, and the name printed half over it */
